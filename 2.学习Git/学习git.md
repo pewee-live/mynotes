@@ -1,4 +1,4 @@
-#1. **安装Git**
+# 1. **安装Git**
 * ***windows环境***
 	* [Git官网直接下载安装程序](https://git-scm.com)
 	* 安装完成后，还需要最后一步设置，在命令行输入：  
@@ -11,7 +11,7 @@
 	*   其他系统
 		>从Git官网下载**[源码](https://github.com/git/git)**，然后解压，[依次输入：./config，make，sudo make install这几个命令安装就好了](https://github.com/git/git/blob/master/INSTALL)。
 
-#2. **关于repository**
+# 2. **关于repository**
   repository是被git管理的目录  
 
 * 创建 repository  
