@@ -87,7 +87,7 @@ See my [About](/about/) page for details.
 2.    接着一个方括号，里面放上图片的替代文字
 3.    接着一个普通括号，里面放上图片的网址，最后还可以用引号包住并加上 选择性的 'title' 文字。
 
-exp : ![小林家的龙女仆](/pic/1.jpg),画师:监督,[P站地址]()https://www.pixiv.net/member.php?id=1565632)
+exp : ![小林家的龙女仆](pic/1.jpg),画师:监督,[P站地址]()https://www.pixiv.net/member.php?id=1565632)
 
 ##反斜杠
 Markdown 支持以下这些符号前面加上反斜杠来帮助插入普通的符号：  
