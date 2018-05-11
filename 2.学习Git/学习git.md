@@ -22,7 +22,7 @@
 
 * 把文件添加到repository
 	* 在/learngit下添加文件或文件夹,以添加readme.txt为例,查看 仓库当前的状态 
-	* 
+	 
 			git status
 	* 添加盖文件至仓库
 	 
