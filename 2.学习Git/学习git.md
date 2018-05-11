@@ -17,7 +17,7 @@
 * 创建 repository  
 	* 创建一个空目录并进入,以/learngit为例
 	* 让其变成Git可以管理的仓库
-	* 
+	 
 			git init
 
 * 把文件添加到repository
@@ -25,15 +25,15 @@
 	* 
 			git status
 	* 添加盖文件至仓库
-	* 
+	 
 			git add readme.txt
 			
 	
 	* 文件提交到仓库,简单解释一下git commit命令，-m后面输入的是本次提交的说明，可以输入任意内容，当然最好是有意义的，这样你就能从历史记录里方便地找到改动记录。
-	* 	
+	 	
 			git commit -m "wrote a readme file"  
 	* 继续修改readme.txt文件内容,运行git status
-	* 
+	 
 			$ git status
 			# On branch master
 			# Changes not staged for commit:
