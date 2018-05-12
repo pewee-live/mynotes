@@ -170,23 +170,23 @@
 		#
 	现在，暂存区的状态就变成这样了：
 	
-	![](pic/1.jpg)
+![](pic/1.jpg)
 	
-	所以，git add命令实际上就是把要提交的所有修改放到暂存区（Stage），然后，执行git commit就可以一次性把暂存区的所有修改提交到分支。
+   所以，git add命令实际上就是把要提交的所有修改放到暂存区（Stage），然后，执行git commit就可以一次性把暂存区的所有修改提交到分支。
 
-		$ git commit -m "understand how stage works"
-		[master 27c9860] understand how stage works
-		 2 files changed, 675 insertions(+)
-		 create mode 100644 LICENSE
-一旦提交后，如果你又没有对工作区做任何修改，那么工作区就是“干净”的：
+			$ git commit -m "understand how stage works"
+			[master 27c9860] understand how stage works
+			 2 files changed, 675 insertions(+)
+			 create mode 100644 LICENSE  
+
+   一旦提交后，如果你又没有对工作区做任何修改，那么工作区就是“干净”的：
 
 		$ git status
 		# On branch master
-		nothing to commit (working directory clean)  
+		nothing to commit (working directory clean)    
 
-	现在版本库变成了这样，暂存区就没有任何内容了：  
-
-	![](pic/2.jpg)  
+   现在版本库变成了这样，暂存区就没有任何内容了：  
+![](pic/2.jpg)  
 
 3. **管理修改**  
 	现在，假定你已经完全掌握了暂存区的概念。下面，我们要讨论的就是，为什么Git比其他版本控制系统设计得优秀，因为Git跟踪并管理的是修改，而非文件。
