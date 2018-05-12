@@ -1,9 +1,10 @@
 # 1. **安装Git**[^1]
 [^1]:[参考地址](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000)
+# 1. **安装Git**
 * ***windows环境***
 	* [Git官网直接下载安装程序](https://git-scm.com)
 	* 安装完成后，还需要最后一步设置，在命令行输入：  
-	* 
+	 
 			$ git config --global user.name "Your Name"
 			$ git config --global user.email "email@example.com"
 * ***linux环境***  
@@ -18,23 +19,23 @@
 1. 创建 repository  
 	* 创建一个空目录并进入,以/learngit为例
 	* 让其变成Git可以管理的仓库
-	* 
+	 
 			git init
 
 * 把文件添加到repository
 	* 在/learngit下添加文件或文件夹,以添加readme.txt为例,查看 仓库当前的状态 
-	* 
+	 
 			git status
 	* 添加盖文件至仓库
-	* 
+	 
 			git add readme.txt
 			
 	
 	* 文件提交到仓库,简单解释一下git commit命令，-m后面输入的是本次提交的说明，可以输入任意内容，当然最好是有意义的，这样你就能从历史记录里方便地找到改动记录。
-	* 	
+	 	
 			git commit -m "wrote a readme file"  
 	* 继续修改readme.txt文件内容,运行git status
-	* 
+	 
 			$ git status
 			# On branch master
 			# Changes not staged for commit:
@@ -257,3 +258,6 @@
 
 	第一次修改 -> git add -> 第二次修改 -> git add -> git commit
 	
+
+	
+
