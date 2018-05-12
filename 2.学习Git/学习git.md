@@ -169,6 +169,7 @@
 		#       modified:   readme.txt
 		#
 	现在，暂存区的状态就变成这样了：
+	
 	![](pic/1.jpg)
 	
 	所以，git add命令实际上就是把要提交的所有修改放到暂存区（Stage），然后，执行git commit就可以一次性把暂存区的所有修改提交到分支。
@@ -183,6 +184,7 @@
 		# On branch master
 		nothing to commit (working directory clean)
 	现在版本库变成了这样，暂存区就没有任何内容了：
+	
 	![](pic/2.jpg)  
 
 3. **管理修改**  
