@@ -1,5 +1,5 @@
 # 1. **安装Git**[^1]
-[^1]:[参考地址](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000)
+[^1]:https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
 * ***windows环境***
 	* [Git官网直接下载安装程序](https://git-scm.com)
 	* 安装完成后，还需要最后一步设置，在命令行输入：  
@@ -15,13 +15,13 @@
 # 2. **关于repository**
   repository是被git管理的目录  
 
-1. 创建 repository  
+1. **创建 repository**  
 	* 创建一个空目录并进入,以/learngit为例
 	* 让其变成Git可以管理的仓库
 	 
 			git init
 
-2. 把文件添加到repository
+2. **把文件添加到repository**
 	* 在/learngit下添加文件或文件夹,以添加readme.txt为例,查看 仓库当前的状态 
 	 
 			git status
@@ -70,7 +70,7 @@
 
 
 # 3. **版本及文件管理**
-1. 版本回退
+1. **版本回退**
 	
 	在Git中，我们用git log命令查看：
 		
@@ -120,7 +120,7 @@
 		ea34578 HEAD@{2}: commit: add distributed
 		cb926e7 HEAD@{3}: commit (initial): wrote a readme file  
 
-2. 工作区和暂存区  
+2. **工作区和暂存区**  
 	* 工作区（Working Directory）:就是你在电脑里能看到的目录，比如我的learngit文件夹就是一个工作区.
 	* 版本库（Repository）:工作区有一个隐藏目录.git，这个不算工作区，而是Git的版本库。
 
@@ -185,7 +185,7 @@
 	现在版本库变成了这样，暂存区就没有任何内容了：
 	![](pic/2.jpg)  
 
-3. 管理修改  
+3. **管理修改**  
 	现在，假定你已经完全掌握了暂存区的概念。下面，我们要讨论的就是，为什么Git比其他版本控制系统设计得优秀，因为Git跟踪并管理的是修改，而非文件。
 
 	你会问，什么是修改？比如你新增了一行，这就是一个修改，删除了一行，也是一个修改，更改了某些字符，也是一个修改，删了一些又加了一些，也是一个修改，甚至创建一个新文件，也算一个修改。
