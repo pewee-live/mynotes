@@ -186,6 +186,7 @@
 		nothing to commit (working directory clean)    
 
    现在版本库变成了这样，暂存区就没有任何内容了：  
+ 
 ![](pic/2.jpg)  
 
 3. **管理修改**  
@@ -258,8 +259,106 @@
 
  	那怎么提交第二次修改呢？你可以继续git add再git commit，也可以别着急提交第一次修改，先git add第二次修改，再git commit，就相当于把两次修改合并后一块提交了：
 
-	第一次修改 -> git add -> 第二次修改 -> git add -> git commit
+	第一次修改 -> git add -> 第二次修改 -> git add -> git commit  
+
+4. **撤销修改**
+
+	* git checkout -- file可以丢弃**工作区**的修改：
 	
+		$ git checkout -- readme.txt
+		命令git checkout -- readme.txt意思就是，把readme.txt文件在工作区的修改全部撤销，这里有两种情况：
+	
+		* 一种是readme.txt自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；
+	
+		* 一种是readme.txt已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
+	
+		总之，就是让这个文件回到最近一次git commit或git add时的状态。git checkout -- file命令中的--很重要，没有--，就变成了“切换到另一个分支”的命令，我们在后面的分支管理中会再次遇到git checkout命令。
+	
+	* 现在假定是凌晨3点，你不但写了一些胡话，还git add到暂存区了：
+
+			$ cat readme.txt
+			Git is a distributed version control system.
+			Git is free software distributed under the GPL.
+			Git has a mutable index called stage.
+			Git tracks changes of files.
+			My stupid boss still prefers SVN.
+		
+			$ git add readme.txt
+	庆幸的是，在commit之前，你发现了这个问题。用git status查看一下，修改只是添加到了暂存区，还没有提交：
+
+				$ git status
+				# On branch master
+				# Changes to be committed:
+				#   (use "git reset HEAD <file>..." to unstage)
+				#
+				#       modified:   readme.txt
+				#
+	Git同样告诉我们，用命令git reset HEAD file可以把**暂存区的修改撤销掉**（unstage），重新放回工作区：
+
+			$ git reset HEAD readme.txt
+			Unstaged changes after reset:
+			M       readme.txt
+	git reset命令既可以回退版本，也可以把暂存区的修改回退到工作区。当我们用HEAD时，表示最新的版本。
+	再用git status查看一下，现在暂存区是干净的，工作区有修改：
+
+			$ git status
+			# On branch master
+			# Changes not staged for commit:
+			#   (use "git add <file>..." to update what will be committed)
+			#   (use "git checkout -- <file>..." to discard changes in working directory)
+			#
+			#       modified:   readme.txt
+			#
+			no changes added to commit (use "git add" and/or "git commit -a")
+	还记得如何丢弃工作区的修改吗？
+
+			$ git checkout -- readme.txt
+			
+			$ git status
+			# On branch master
+			nothing to commit (working directory clean)
+	整个世界终于清静了！
+
+5. **删除文件**  
+
+	在Git中，删除也是一个修改操作，我们实战一下，先添加一个新文件test.txt到Git并且提交：
+
+		$ git add test.txt
+		$ git commit -m "add test.txt"
+		[master 94cdc44] add test.txt
+		 1 file changed, 1 insertion(+)
+		 create mode 100644 test.txt
+	一般情况下，你通常直接在文件管理器中把没用的文件删了，或者用rm命令删了：
+
+		$ rm test.txt
+	这个时候，Git知道你删除了文件，因此，工作区和版本库就不一致了，git status命令会立刻告诉你哪些文件被删除了：
+
+		$ git status
+		# On branch master
+		# Changes not staged for commit:
+		#   (use "git add/rm <file>..." to update what will be committed)
+		#   (use "git checkout -- <file>..." to discard changes in working directory)
+		#
+		#       deleted:    test.txt
+		#
+		no changes added to commit (use "git add" and/or "git commit -a")
+	现在你有两个选择，一是确实要从版本库中删除该文件，那就用命令git rm删掉，并且git commit：
+
+		$ git rm test.txt
+		rm 'test.txt'
+		$ git commit -m "remove test.txt"
+		[master d17efd8] remove test.txt
+		 1 file changed, 1 deletion(-)
+		 delete mode 100644 test.txt
+	现在，文件就从版本库中被删除了。
+
+	另一种情况是删错了，因为版本库里还有呢，所以可以很轻松地把误删的文件恢复到最新版本：
+
+		$ git checkout -- test.txt
+	git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
+
+	
+# **4.远程仓库**  
 
 	
 
