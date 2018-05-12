@@ -182,9 +182,10 @@
 
 		$ git status
 		# On branch master
-		nothing to commit (working directory clean)
-	现在版本库变成了这样，暂存区就没有任何内容了：
-	
+		nothing to commit (working directory clean)  
+
+	现在版本库变成了这样，暂存区就没有任何内容了：  
+
 	![](pic/2.jpg)  
 
 3. **管理修改**  
