@@ -7,7 +7,7 @@
 ![](pic/2.png)
 	
 		 ssh ip -p SSH端口,默认22
- 在输入对应的密码即可.使用
+在输入对应的密码即可.使用
 	
 	 	exit  
 退出,或者使用  
@@ -19,8 +19,10 @@
 	![](pic/4.png)
 	 
 			ssh-keygen  
+
 	生成一对公私钥,进入/root/.ssh/下其中pubkey为公钥,使用
 		
 			ssh-copy-id -p 22 ip  
+
 	来copy rsa公钥至目标主机,反之同理.
 	![](pic/5.png)
