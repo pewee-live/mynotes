@@ -13,7 +13,7 @@
 		protected boolean tryReleaseShared(int arg)	共享式释放锁
 		protected boolean isHeldExclusively()  查看独占锁是否被当前线程占用getExclusiveOwnerThread() == Thread.currentThread()或查看独占锁是否被占用
 * 一个基于AQS的非重入独占锁 
-![非重入锁](pic/1.JPG
+![非重入锁](pic/1.JPG)
 
 ## 结构定义
 1. AQS中FIFO的双向队列 
