@@ -12,8 +12,9 @@
 		protected int tryAcquireShared(int arg)	共享式获取锁
 		protected boolean tryReleaseShared(int arg)	共享式释放锁
 		protected boolean isHeldExclusively()  查看独占锁是否被当前线程占用getExclusiveOwnerThread() == Thread.currentThread()或查看独占锁是否被占用
-* 一个基于AQS的非重入独占锁 
-![非重入锁](pic/1.jpg)
+* 一个基于AQS的非重入独占锁   
+
+![非重入锁](pic/1.JPG)
 
 ## 结构定义
 1. AQS中FIFO的双向队列 
@@ -44,7 +45,7 @@
 		     * The synchronization state.
 		     */
 		    private volatile int state;
-	* ![同步队列](pic/2.jpg)
+	* ![同步队列](pic/2.JPG)
 2. AQS中Node节点
 	* Node是AQS的内部类,其实例是AQS对列中的元素,AQS维护这个队列的Head和Tail的指针,没有获取到锁的线程会被构造为一个Node推入队尾,每个Node维护其前驱及后继节点,故AQS的同步队列为一个双向队列;
 	* Node定义代码如下:
@@ -179,11 +180,11 @@
 	* 等待队列是基于锁的,注意该线程必须先获取锁,在使用Condition.await来等待,同时该线程会释放锁,构造为Node加入等待队列;
 	* 等待队列是一个FIFO的队列,每个的等待的线程被构造为一个Node,每个ConditionObject包含一个等待队列;
 	* ConditionObject对象拥有首尾节点指针firstWaiter和lastWaiter,新加入一个Node只用将元尾节点的next指向新节点,并更新lastWaiter即可;节点入队的过程没有使用CAS来保障因为入队的节点必定获取了锁,所以是线程安全的.
-	* ![等待队列](pic/3.jpg)
+	* ![等待队列](pic/3.JPG)
 	* 从同步队列到等待队列:由于在获取锁的线程使用Condition.await时,会进入等待队列并释放锁.从同步队列和等待队列来看就等于同步队列的首节点(同步队列首节点获取锁)移动到了等待队列尾部,然后释放锁同时唤醒同步队列的后继节点,进入等待队列的节点状态会置为CONDITION,并LockSupport.park(this)阻塞,等待状态会直到Condition.signal或被打断.
 	* 从等待队列到同步队列:当等待队列中的节点被唤醒(Condition.signal),则这个节点开始获取锁,如果对等待队列中的线程进行中断,会抛出打断异常.Condition.signal会唤醒等待队列中的等待时间最长的处于没有被取消状态的非空节点(首节点),在唤醒节点(LockSupport.unpark)之前,使用CAS将该节点的waitStatus由CONDITION更新到0,然后会将这个节点移到同步队列,同时将前节点waitSattus改为SIGNAL,若其前节点取消或更改失败则LockSupport.unpark唤醒入队节点.
-	* ![从同步队列到等待队列](pic/4.jpg)
-	* ![从等待队列到同步队列](pic/5.jpg)
+	* ![从同步队列到等待队列](pic/4.JPG)
+	* ![从等待队列到同步队列](pic/5.JPG)
 
 
 ## 代码分析
