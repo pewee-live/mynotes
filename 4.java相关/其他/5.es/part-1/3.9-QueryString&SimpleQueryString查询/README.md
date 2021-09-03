@@ -16,7 +16,7 @@ PUT /users/_doc/2
   "about":"Hadoop"
 }
 
-
+##queryString default_field为uriapi中的df,AND 为布尔查询与操作
 POST users/_search
 {
   "query": {
@@ -27,7 +27,7 @@ POST users/_search
   }
 }
 
-
+#queryString查询条件分组
 POST users/_search
 {
   "query": {
@@ -39,7 +39,7 @@ POST users/_search
 }
 
 
-#Simple Query 默认的operator是 Or
+#Simple Query 默认的operator是 Or,当然也可以自己制定operator,但是query中的AND OR NOT 会作为term做查询处理
 POST users/_search
 {
   "query": {

@@ -60,6 +60,7 @@ curl -XPOST "http://localhost:9202/users/_doc" -H 'Content-Type: application/jso
 
 
 #查询
+users表示本机,cluster1:users,cluster2:users表示其他2个机器
 GET /users,cluster1:users,cluster2:users/_search
 {
   "query": {

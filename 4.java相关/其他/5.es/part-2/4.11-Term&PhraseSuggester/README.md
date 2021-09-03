@@ -1,4 +1,7 @@
 # Term & Phrase Suggester
+
+## 用户搜索建议,自动补全
+![用户搜索](1.png)
 ## 课程Demo
 ```
 DELETE articles
@@ -63,25 +66,27 @@ POST _analyze
   "text": ["Elk stack  rocks rock"]
 }
 
-POST /articles/_search
-{
-  "size": 1,
-  "query": {
-    "match": {
-      "body": "lucen rock"
-    }
-  },
-  "suggest": {
-    "term-suggestion": {
-      "text": "lucen rock",
-      "term": {
-        "suggest_mode": "missing",
-        "field": "body"
-      }
-    }
-  }
-}
+### 这里lucen是用户输入的错误拼写,将他放入suggest的text中,当无法搜索到结果(missing),会返回建议单词,每个建议都返回了算分根据错误的词和改词相似度需要的改动计算
+		POST /articles/_search
+		{
+		  "size": 1,
+		  "query": {
+		    "match": {
+		      "body": "lucen rock"
+		    }
+		  },
+		  "suggest": {
+		    "term-suggestion": {
+		      "text": "lucen rock",
+		      "term": {
+		        "suggest_mode": "missing",
+		        "field": "body"
+		      }
+		    }
+		  }
+		}
 
+![用户搜索](2.png)
 
 POST /articles/_search
 {
@@ -112,7 +117,7 @@ POST /articles/_search
   }
 }
 
-
+### prefix_length添加后让hocks也能得到推荐
 POST /articles/_search
 {
 
@@ -130,6 +135,9 @@ POST /articles/_search
 }
 
 
+## phash suggest,有在term suggest上添加逻辑
+
+![phash suggest](3.png)
 POST /articles/_search
 {
   "suggest": {

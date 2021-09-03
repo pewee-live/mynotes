@@ -1,11 +1,18 @@
 # 多字段特性及Mapping中配置自定义Analyzer
+# excactvalue:应看作为一个整体,不做分词,如Apple Store.request的uri等
+# 全文本:要分词,比如日志信息
+
+##为text类型添加子字段,,制定不同类型,语言的分词器
+* char_filter:对文本做处理,如去除整文的html标签,会影响最终索引的position和offset
+* tokenizer:分词器,将char_filter处理过的内容做分词,可以自己实现分词器
+* filter:把分好的term再做处理,如转小写,去除stopwords等
 ## 课程Demo
 ```
 PUT logs/_doc/1
 {"level":"DEBUG"}
 
 GET /logs/_mapping
-
+#去除html标签,整文做keyword不分词
 POST _analyze
 {
   "tokenizer":"keyword",

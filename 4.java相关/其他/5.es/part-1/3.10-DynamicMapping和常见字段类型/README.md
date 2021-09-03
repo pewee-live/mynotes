@@ -1,5 +1,17 @@
 # Dynamic Mapping 和常见字段类型
 
+* 字符串: 
+  *  匹配日期设置date,
+  *  匹配数字设置为float或long,该选项默认关闭,
+  *  设置text并添加keyword子字段
+* 布尔值: boolean
+* 浮点数:float
+* 整数:long
+* 对象:object
+* 数组:由第一个非空数值决定
+* 空值:忽略
+	
+
 Mapping中的字段一旦设定后，禁止直接修改。因为倒排索引生成后不允许直接修改。需要重新建立新的索引，做reindex操作。
 
 类似数据库中的表结构定义，主要作用
@@ -80,7 +92,7 @@ PUT dynamic_mapping_test/_doc/10
 }
 
 
-#该字段不可以被搜索，因为dynamic已经被设置为false
+#该字段不可以被搜索，因为dynamic已经被设置为false,但是_source已经更新
 POST dynamic_mapping_test/_search
 {
   "query":{
@@ -100,7 +112,7 @@ PUT dynamic_mapping_test/_mapping
 
 
 
-#写入数据出错，HTTP Code 400
+#写入数据出错，HTTP Code 400,strict不允许由不认识的字段写入
 PUT dynamic_mapping_test/_doc/12
 {
   "lastField":"value"

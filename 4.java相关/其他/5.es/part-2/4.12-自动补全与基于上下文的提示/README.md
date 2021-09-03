@@ -1,7 +1,11 @@
 # 自动补全与基于上下文的提示
+![自动补全](1.png)
+
+
 ## 课程demo
 ```
 DELETE articles
+创建mapping,对某个字段的mapping设置completion
 PUT articles
 {
   "mappings": {
@@ -40,9 +44,11 @@ POST articles/_search?pretty
   }
 }
 
-
+## 上下文 suggest
+![上下文自动补全](2.png)
 DELETE comments
 PUT comments
+设置mapping
 PUT comments/_mapping
 {
   "properties": {
@@ -56,6 +62,7 @@ PUT comments/_mapping
   }
 }
 
+数据
 POST comments/_doc
 {
   "comment":"I love the star war movies",
@@ -78,7 +85,7 @@ POST comments/_doc
   }
 }
 
-
+可以根据输入的comment_category为movie或coffee获得不同的结果
 POST comments/_search
 {
   "suggest": {

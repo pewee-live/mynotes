@@ -11,7 +11,7 @@ PUT ttemplate/_doc/1
 GET ttemplate/_mapping
 
 
-#Create a default template
+#Create a default template 可以为es设定多个indexTemplate,具体创建index会根据index_patterns做匹配,可以匹配多个
 PUT _template/template_default
 {
   "index_patterns": ["*"],
@@ -52,6 +52,7 @@ PUT testtemplate/_doc/1
 GET testtemplate/_mapping
 get testtemplate/_settings
 
+#自己在创建索引时的设置会覆盖掉indxeTemplate
 PUT testmy
 {
 	"settings":{
@@ -71,7 +72,7 @@ DELETE /_template/template_test
 
 
 
-#Dynaminc Mapping 根据类型和字段名
+#Dynaminc Mapping 是定义在某个index的mapping中的,根据类型和字段名
 DELETE my_index
 
 PUT my_index/_doc/1

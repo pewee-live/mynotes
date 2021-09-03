@@ -97,7 +97,7 @@ GET products/_search
 }
 
 
-# 日期 range
+# 日期 range 大于现在-1年(y年,M月,w周,d天,H/h小时,m分钟,s秒)
 POST products/_search
 {
     "query" : {
@@ -137,7 +137,8 @@ POST /movies/_bulk
 { "title" : "Dave","year":1993,"genre":["Comedy","Romance"] }
 
 
-#处理多值字段，term 查询是包含，而不是等于
+#处理多值字段
+	term 查询是包含，而不是等于,如果想要精确查询这个只有一个的值,需要在文档中添加genre_count字段计数在组合boolean查询解决
 POST movies/_search
 {
   "query": {

@@ -32,9 +32,8 @@ GET users/_doc/1
 
 
 ###  Index & Update
-#Update 指定 ID  (先删除，在写入)
 GET users/_doc/1
-
+# Index(先删除，在写入)
 PUT users/_doc/1
 {
 	"user" : "Mike"
@@ -43,6 +42,7 @@ PUT users/_doc/1
 
 
 #GET users/_doc/1
+#Update 指定 ID  
 #在原文档上增加字段
 POST users/_update/1/
 {

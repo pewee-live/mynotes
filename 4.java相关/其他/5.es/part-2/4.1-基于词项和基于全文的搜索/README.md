@@ -21,7 +21,8 @@ POST /products/_bulk
 { "productID" : "JODL-X-1937-#pV7","desc":"MBP" }
 
 GET /products
-
+#term查询,对输入不做处理
+#用iPhone查询不到,因为es索引默认用standard分词吧他转成了小写字母,term查询会用你输入的原term做匹配,如果要用term查询,text有个keyword字段可以索引原文本.或者使用match查询
 POST /products/_search
 {
   "query": {
@@ -72,7 +73,8 @@ POST /products/_search
 
 
 
-
+##term查询返回结果会有算分过程,
+term中用constant_score转为filter跳过算分,返回结果更快,filter还能利用缓存
 POST /products/_search
 {
   "explain": true,
@@ -104,10 +106,22 @@ PUT groups
 }
 
 GET groups/_mapping
-
+#全文查询match,match_phase,query_string会对输入的查询分词分完的term列表再去查询,最后结果合并
 POST groups/_doc
 {
   "names": [ "John Water", "Water Smith"]
+}
+
+POST groups/_search
+{
+  "query": {
+    "match": {
+      "names": {
+        "query": "Water Water",
+        "operator": "AND"
+      }
+    }
+  }
 }
 
 POST groups/_search

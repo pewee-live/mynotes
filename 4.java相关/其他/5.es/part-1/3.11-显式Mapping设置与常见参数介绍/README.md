@@ -1,4 +1,7 @@
 # 显式Mapping设置与常见参数介绍
+##建议自定义流程
+先创建临时index,写入一些sample文档,再通过GET INDEX/_mapping获得es自动生成的mapping,修改后再自己创建新index,删掉旧index
+
 ## 课程Demos
 ```
 
@@ -41,7 +44,7 @@ POST /users/_search
 
 
 
-#设定Null_value
+#设定Null_value,只有keyword类型能设定null_value,吧null转换为"NULL"字符串
 
 DELETE users
 PUT users

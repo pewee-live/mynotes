@@ -10,12 +10,21 @@
 #下载与ES相同版本号的logstash，（7.1.0），并解压到相应目录
 #修改movielens目录下的logstash.conf文件
 #path修改为,你实际的movies.csv路径
-input {
-  file {
-    path => "YOUR_FULL_PATH_OF_movies.csv"
-    start_position => "beginning"
-    sincedb_path => "/dev/null"
-  }
+	input {
+	  file {
+	    path => "YOUR_FULL_PATH_OF_movies.csv"
+	    start_position => "beginning"
+	    sincedb_path => "/dev/null"
+	  }
+	}
+
+	注意这个是linux的配置,sincedb_path指向的是必须存在的路径,文件可以不存在,windows下可以自行修改,如
+	input {
+	  file {
+	    path => "C:/develop/env/ml-latest-small/movies.csv"
+	    start_position => "beginning"
+	    sincedb_path => "C:/develop/env/ml-latest-small/123"
+	  }
 }
 
 #启动Elasticsearch实例，然后启动 logstash，并制定配置文件导入数据

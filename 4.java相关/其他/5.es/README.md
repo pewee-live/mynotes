@@ -1,50 +1,50 @@
 # 《Elasticsearch 核心技术与实战》
-- Github 地址 https://github.com/onebirdrocks/geektime-ELK/
+- 原Github 地址 https://github.com/onebirdrocks/geektime-ELK/
 - 极客时间：《Elasticsearch核心技术与实战》视频课程购买地址 - https://time.geekbang.org/course/intro/197
 ## 第一部分：初识 Elasticsearch
 ### 第 1 章：概述
 1. [课程介绍](part-1/1.1-课程介绍/README.md)
 2. [课程综述及学习建议](part-1/1.2-课程综述及学习建议/README.md)
 3. [Elasticsearch 简介及其发展历史](part-1/1.3-Elasticsearch简介及其发展历史/README.md)
-4. [Elastic Stack 家族成员及其应用场景](part-1/1.4-Elastic Stack 家族成员及其应用场景/README.md)
+4. [Elastic Stack 家族成员及其应用场景](part-1/1.4-ElasticStack家族成员及其应用场景/README.md)
 ### 第 2 章：安装上手
-1. Elasticsearch 的安装与简单配置
-2. Kibana 的安装与界面快速浏览
-3. 在 Docker 容器中运行 Elasticsearch，Kibana 和 Cerebro
-4. Logstash 安装与导入数据
+1. [Elasticsearch 的安装与简单配置](part-1/2.1-Elasticsearch的安装与简单配置/README.md)
+2. [Kibana 的安装与界面快速浏览](part-1/2.2-Kibana的安装与界面快速浏览/README.md)
+3. [在 Docker 容器中运行 Elasticsearch，Kibana 和 Cerebro](part-1/2.3-在Docker容器中运行Elasticsearch,Kibana和Cerebro/README.md)
+4. [Logstash 安装与导入数据](part-1/2.4-Logstash安装与导入数据/README.md)
 ### 第 3 章：Elasticsearch 入门
-1. 基本概念（1）：索引，文档和 REST API
-2. 基本概念（2）：节点，集群，分片及副本
-3. 文档的基本 CRUD 与批量操作
-4. 倒排索引入门
-5. 通过分析器进行分词
-6. Search API 概览
-7. URI Search 详解
-8. Request Body 与 Query DSL 简介
-9. Query String & Simple Query String 查询
-10. Dynamic Mapping 和常见字段类型
-11. 显式 Mapping 设置与常见参数介绍
-12. 多字段特性及 Mapping 中配置自定义 Analyzer
-13. Index Template 和 Dynamic Template
-14. Elasticsearch 聚合分析简介
+1. [基本概念（1）：索引，文档和 REST API](part-1/3.1-基本概念1索引文档和RESTAPI/README.md)
+2. [基本概念（2）：节点，集群，分片及副本](part-1/3.2-基本概念2节点,集群,分片及副本/README.md)
+3. [文档的基本 CRUD 与批量操作](part-1/3.3-文档的基本CRUD与批量操作/README.md)
+4. [倒排索引入门](part-1/3.4-倒排索引入门/README.md)
+5. [通过分析器进行分词](part-1/3.5-通过分析器进行分词/README.md)
+6. [Search API 概览](part-1/3.6-SearchAPI概览/README.md)
+7. [URI Search 详解](part-1/3.7-URISearch详解/README.md)
+8. [Request Body 与 Query DSL 简介](part-1/3.8-RequestBody与QueryDSL简介/README.md)
+9. [Query String & Simple Query String 查询](part-1/3.9-QueryString&SimpleQueryString查询/README.md)
+10. [Dynamic Mapping 和常见字段类型](part-1/3.10-DynamicMapping和常见字段类型/README.md)
+11. [显式 Mapping 设置与常见参数介绍](part-1/3.11-显式Mapping设置与常见参数介绍/README.md)
+12. [多字段特性及 Mapping 中配置自定义 Analyzer](part-1/3.12-多字段特性及Mapping中配置自定义Analyzer/README.md)
+13. [Index Template 和 Dynamic Template](part-1/3.13-IndexTemplate和DynamicTemplate/README.md)
+14. [Elasticsearch 聚合分析简介](part-1/3.14-Elasticsearch聚合分析简介/README.md)
 15. 第一部分总结
 ## 第二部分：深入了解 Elasticsearch
 ### 第 4 章：深入搜索
-1. 基于词项和基于全文的搜索
-2. 结构化搜索
-3. 搜索的相关性算分
-4. Query & Filtering 与多字符串多字段查询
-5. 单字符串多字段查询：Dis Max Query
-6. 单字符串多字段查询：Multi Match
-7. 多语言及中文分词与检索
-8. Space Jam，一次全文搜索的实例
-9. 使用 Search Template 和 Index Alias 查询
-10. 综合排序：Function Score Query 优化算分
-11. Term & Phrase Suggester
-12. 自动补全与基于上下文的提示
-13. 配置跨集群搜索
+1. [基于词项和基于全文的搜索](part-2/4.1-基于词项和基于全文的搜索/README.md)
+2. [结构化搜索](part-2/44.2-结构化搜索/README.md)
+3. [搜索的相关性算分](part-2/4.3-搜索的相关性算分/README.md)
+4. [Query & Filtering 与多字符串多字段查询](part-2/4.4-Query&Filtering实现多字符串多字段查询/README.md)
+5. [单字符串多字段查询：Dis Max Query](part-2/4.5-单字符串多字段查询-DisMaxQuery/README.md)
+6. [单字符串多字段查询：Multi Match](part-2/4.6-单字符串多字段查询-Multi-Match/README.md)
+7. [多语言及中文分词与检索](part-2/4.7-多语言及中文分词与检索/README.md)
+8. [Space Jam，一次全文搜索的实例](part-2/4.8-SpaceJam一个全文搜索的实例/README.md)
+9. [使用 Search Template 和 Index Alias 查询](part-2/4.9-使用SearchTemplate和IndexAlias进行查询/README.md)
+10. [综合排序：Function Score Query 优化算分](part-2/4.10-综合排序：Function Score Query 优化算分/README.md)
+11. [Term & Phrase Suggester](part-2/4.11-Term&PhraseSuggester/README.md)
+12. [自动补全与基于上下文的提示](part-2/4.12-自动补全与基于上下文的提示/README.md)
+13. [配置跨集群搜索](part-2/4.13-跨集群搜索/README.md)
 ### 第 5 章：分布式特性及分布式搜索的机制
-1. 集群分布式模型及选主与脑裂问题
+1. [集群分布式模型及选主与脑裂问题](part-2/5.1-集群分布式模型及选主与脑裂问题/README.md)
 2. 分片与集群的故障转移
 3. 文档分布式存储
 4. 分片及其生命周期

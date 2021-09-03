@@ -34,7 +34,7 @@ POST kibana_sample_data_ecommerce/_search
 
 }
 
-#source filtering
+#source filtering 有时候不需要全部存的文档,只需要拿到索引的部分字段
 POST kibana_sample_data_ecommerce/_search
 {
   "_source":["order_date"],
@@ -60,9 +60,10 @@ GET kibana_sample_data_ecommerce/_search
   }
 }
 
-
+#term查询 last OR christmas
 POST movies/_search
-{
+{		
+  "profile": true,	
   "query": {
     "match": {
       "title": "last christmas"
@@ -70,6 +71,8 @@ POST movies/_search
   }
 }
 
+
+#term查询 last AND christmas,要求同时出现
 POST movies/_search
 {
   "query": {
@@ -81,7 +84,7 @@ POST movies/_search
     }
   }
 }
-
+#phase查询,要求同时出出现且顺序相同
 POST movies/_search
 {
   "query": {
@@ -93,7 +96,7 @@ POST movies/_search
     }
   }
 }
-
+#phase查询,slop表示中间可以有几个其他单词(term)
 POST movies/_search
 {
   "query": {
