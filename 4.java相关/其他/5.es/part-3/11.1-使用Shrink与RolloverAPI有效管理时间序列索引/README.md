@@ -1,13 +1,16 @@
 # 使用 shrink与rolloverAPI有效的管理索引
 ## index api
-![](0.png)
+![0](0.png)
 
+## shrink indxe
+![1](1.png)
+![2](2.png)
 
 #课程demo
 ```
 
 
-# 打开关闭索引
+## 打开关闭索引
 DELETE test
 #查看索引是否存在
 HEAD test
@@ -35,7 +38,7 @@ POST test/_search
 POST test/_count
 
 
-# 在一个 hot-warm-cold的集群上进行测试
+## shrink在一个 hot-warm-cold的集群上进行测试
 GET _cat/nodes
 GET _cat/nodeattrs
 
