@@ -1,4 +1,7 @@
-#
+# connect
+为防止攻击用es节点加入集群
+
+![](0.png)
 ## 课程demo
 
 ```
@@ -12,7 +15,7 @@ bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12
 #将证书拷贝到 config/certs目录下
 elastic-certificates.p12
 
-
+![](1.png)
 bin/elasticsearch -E node.name=node0 -E cluster.name=geektime -E path.data=node0_data -E http.port=9200 -E xpack.security.enabled=true -E xpack.security.transport.ssl.enabled=true -E xpack.security.transport.ssl.verification_mode=certificate -E xpack.security.transport.ssl.keystore.path=certs/elastic-certificates.p12 -E xpack.security.transport.ssl.truststore.path=certs/elastic-certificates.p12
 
 bin/elasticsearch -E node.name=node1 -E cluster.name=geektime -E path.data=node1_data -E http.port=9201 -E xpack.security.enabled=true -E xpack.security.transport.ssl.enabled=true -E xpack.security.transport.ssl.verification_mode=certificate -E xpack.security.transport.ssl.keystore.path=certs/elastic-certificates.p12 -E xpack.security.transport.ssl.truststore.path=certs/elastic-certificates.p12

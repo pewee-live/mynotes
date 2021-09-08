@@ -1,4 +1,9 @@
 # 文档的父子关系
+![父子关系](0.png)
+![声明](1.png)
+![父声明](2.png)
+![子声明](3.png)
+![场景](4.png)
 ## 课程demo
 ```
 DELETE my_blogs
@@ -89,10 +94,10 @@ POST my_blogs/_search
 }
 
 
-#根据父文档ID查看
+#根据父文档ID查看,没有子文档返回
 GET my_blogs/_doc/blog2
 
-# Parent Id 查询
+# Parent Id 查询子文档,这里查询的是id为blog2下的所有子文档
 POST my_blogs/_search
 {
   "query": {
@@ -103,7 +108,7 @@ POST my_blogs/_search
   }
 }
 
-# Has Child 查询,返回父文档
+# Has Child 查询,通过子文档查询返回符合条件父文档
 POST my_blogs/_search
 {
   "query": {
@@ -119,7 +124,7 @@ POST my_blogs/_search
 }
 
 
-# Has Parent 查询，返回相关的子文档
+# Has Parent 查询，通过福文档查询返回符合的相关的子文档
 POST my_blogs/_search
 {
   "query": {
@@ -136,9 +141,9 @@ POST my_blogs/_search
 
 
 
-#通过ID ，访问子文档
+#通过ID ，访问子文档,发现无法访问的
 GET my_blogs/_doc/comment3
-#通过ID和routing ，访问子文档
+#通过ID和routing ，访问子文档,制定了父文档才能访问
 GET my_blogs/_doc/comment3?routing=blog2
 
 #更新子文档

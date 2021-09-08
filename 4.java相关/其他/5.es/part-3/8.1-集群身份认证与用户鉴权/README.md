@@ -1,4 +1,7 @@
 # 集群身份认证与用户鉴权
+![](0.png)
+
+- nginx反向代理
 - 如何为集群启用X-Pack Security
 - 如何为内置用户设置密码
 - 设置 Kibana与ElasticSearch通信鉴权
@@ -10,19 +13,21 @@ discovery.type: single-node
 
 ## 课程demo
 ```
+## 开启xpack认证授权功能
+## 1.可以在elasticsearch.yml中添加xpack.security.enabled=true或命令行添加
 #启动单节点
 bin/elasticsearch -E node.name=node0 -E cluster.name=geektime -E path.data=node0_data -E http.port=9200 -E xpack.security.enabled=true
 
 #使用Curl访问ES，或者浏览器访问 “localhost:9200/_cat/nodes?pretty”。返回401错误
 curl 'localhost:9200/_cat/nodes?pretty'
 
-#运行密码设定的命令，设置ES内置用户及其初始密码。
+# 2.运行密码设定的命令，设置ES内置用户及其初始密码。
 bin/elasticsearch-setup-passwords interactive
 
 curl -u elastic 'localhost:9200/_cat/nodes?pretty'
 
 
-# 修改 kibana.yml
+# 3.修改kibana/config  kibana.yml
 elasticsearch.username: "kibana"
 elasticsearch.password: "changeme"
 

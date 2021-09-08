@@ -1,4 +1,16 @@
 # Hot & Warm 架构与 Shard Filtering
+
+## hot warm 节点
+![](0.png)
+![](1.png)
+![](2.png)
+![](3.png)
+![](4.png)
+![](5.png)
+
+## Rack awareness
+![](6.png)
+![](7.png)
 ## 课程代码
 ```
 # 标记一个 Hot 节点

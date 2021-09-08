@@ -1,16 +1,19 @@
 # 监控 Elasticsearch 集群
+监控
+![](0.png)
+
 ## 课程demo
 ```
-# Node Stats：
+# Node Stats：节点级别的信息
 GET _nodes/stats
 
-#Cluster Stats:
+#Cluster Stats: 集群级别的信息
 GET _cluster/stats
 
-#Index Stats:
+#Index Stats: 索引级别的统计信息
 GET kibana_sample_data_ecommerce/_stats
 
-#Pending Cluster Tasks API:
+#Pending Cluster Tasks API: task信息,正在运行的task
 GET _cluster/pending_tasks
 
 # 查看所有的 tasks，也支持 cancel task

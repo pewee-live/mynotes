@@ -1,4 +1,5 @@
 # 作用范围与排序
+* 聚合的租用范围是query查询返回的结果集,也可以通过filter,post filter,global改变聚合作用范围
 ## 课程demo
 ```
 DELETE /employees
@@ -146,7 +147,7 @@ POST employees/_search
 }
 
 
-#global
+#global 该聚合分析在所有文档中产生作用
 POST employees/_search
 {
   "size": 0,
@@ -207,7 +208,7 @@ POST employees/_search
 
 
 #排序 order
-#count and key
+#对其他聚合结果进行排序
 POST employees/_search
 {
   "size": 0,

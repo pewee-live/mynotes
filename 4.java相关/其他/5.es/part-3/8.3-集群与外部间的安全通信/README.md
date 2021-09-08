@@ -1,4 +1,4 @@
-
+## 集群外部练级安全,如kinbana,logstash等访问es9200端口
 
 ```
 xpack.security.http.ssl.enabled: true
@@ -19,7 +19,7 @@ bin/elasticsearch -E node.name=node0 -E cluster.name=geektime -E path.data=node0
 
 
 
-# 为kibana生成pem
+# 为kibana生成pem,copy到kibana/configs/cert下
 openssl pkcs12 -in elastic-certificates.p12 -cacerts -nokeys -out elastic-ca.pem
 
 
@@ -30,7 +30,7 @@ elasticsearch.ssl.verificationMode: certificate
 
 
 # 为 Kibna 配置 HTTPS
-# 生成后解压，包含了instance.crt 和 instance.key
+# 生成后解压，包含了instance.crt 和 instance.key,copy到kibana/configs/cert下
 bin/elasticsearch-certutil ca --pem
 
 server.ssl.enabled: true

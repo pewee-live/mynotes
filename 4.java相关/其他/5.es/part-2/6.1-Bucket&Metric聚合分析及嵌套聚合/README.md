@@ -1,4 +1,23 @@
 # Bucket & Metric Aggregation
+* bucket:做分组
+
+	* term aggr 做聚合的字段需要打开fielddata才能term aggr
+	* text打开fielddata后,做bucket分组会对其分词再分桶
+
+	![bucket](0.png)
+	
+	优化term:再keyword上打开选项提前加载.提前再文档写入ES的时候,term加载到cache中,做term的时候速度提升
+	![优化term分桶性能](3.png)
+	
+	* range/histogram聚合(区间/直方图)
+	* bucket聚合可嵌套子聚合,子聚合可以为bucket或metric
+* metric:做统计,如max,min,avg
+
+  	![metric](2.png)
+
+## 语法
+![aggs语法](1.png)
+
 ## demos
 ```
 DELETE /employees
@@ -73,6 +92,8 @@ PUT /employees/_bulk
 { "index" : {  "_id" : "20" } }
 { "name" : "Kathy","age":29,"job":"DBA","gender":"female","salary": 20000}
 
+
+## metric
 # Metric 聚合，找到最低的工资
 POST employees/_search
 {
@@ -137,7 +158,7 @@ POST employees/_search
 
 
 
-
+## bucket
 # 对keword 进行聚合
 POST employees/_search
 {
@@ -276,7 +297,7 @@ POST employees/_search
 
 
 
-#Salary Ranges 分桶，可以自己定义 key
+#Salary Ranges 分桶，可以自己定义 key,指定了返回的时候也会返回,若不指定,ES会自动生成key
 POST employees/_search
 {
   "size": 0,

@@ -1,4 +1,15 @@
 # Elasticsearch 数据建模实例
+建模方法
+![](0.png)
+![](1.png)
+![](2.png)
+![](3.png)
+![](4.png)
+![](5.png)
+![](6.png)
+![](7.png)
+![](8.png)
+
 ##课程demo
 ```
 ###### Data Modeling Example
@@ -20,7 +31,7 @@ GET books/_mapping
 
 DELETE books
 
-#优化字段类型
+#优化字段类型"index": false,因为我们不会用url来做搜索,但是enable没改成false,有可能对他做聚合分析,设置成enable=false就无法搜索和聚合
 PUT books
 {
       "mappings" : {

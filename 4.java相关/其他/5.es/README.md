@@ -45,51 +45,51 @@
 13. [配置跨集群搜索](part-2/4.13-跨集群搜索/README.md)
 ### 第 5 章：分布式特性及分布式搜索的机制
 1. [集群分布式模型及选主与脑裂问题](part-2/5.1-集群分布式模型及选主与脑裂问题/README.md)
-2. 分片与集群的故障转移
-3. 文档分布式存储
-4. 分片及其生命周期
-5. 剖析分布式查询及相关性算分
-6. 排序及 Doc Values & Fielddata
-7. 分页与遍历：From, Size, Search After & Scroll API
-8. 处理并发读写操作
+2. [分片与集群的故障转移](part-2/5.2-分片与集群的故障转移/README.md)
+3. [文档分布式存储](part-2/5.3-文档分布式存储/README.md)
+4. [分片及其生命周期](part-2/5.4-分片及其生命周期/README.md)
+5. [剖析分布式查询及相关性算分](part-2/5.5-剖析分布式查询及相关性评分/README.md)
+6. [排序及 Doc Values & Fielddata](part-2/5.6-排序及DocValues&Fielddata/README.md)
+7. [分页与遍历：From, Size, Search After & Scroll API](part-2/5.7-分页与遍历-FromSize&SearchAfter&ScrollAPI/README.md)
+8. [处理并发读写操作](part-2/5.8-处理并发读写/README.md)
 ### 第 6 章：深入聚合分析
-1. Bucket & Metric 聚合分析及嵌套聚合
-2. Pipeline 聚合分析
-3. 作用范围与排序
-4. 聚合分析的原理及精准度问题
+1. [Bucket & Metric 聚合分析及嵌套聚合](part-2/6.1-Bucket&Metric聚合分析及嵌套聚合/README.md)
+2. [Pipeline 聚合分析](part-2/6.2-Pipeline聚合分析/README.md)
+3. [作用范围与排序](part-2/6.3-作用范围与排序/README.md)
+4. [聚合分析的原理及精准度问题](part-2/6.4-聚合分析的原理及精准度问题/README.md)
 ### 第 7 章：数据建模
-1. 对象及 Nested 对象
-2. 文档的父子关系
-3. Update By Query & Reindex API
-4. Ingest Pipeline & Painless Script
-6. Elasticsearch 数据建模实例
-7. Elasticsearch 数据建模最佳实践
-8. 第二部分总结回顾
+1. [对象及 Nested 对象](part-2/7.1-对象及Nested对象/README.md)
+2. [文档的父子关系](part-2/7.2-文档的父子关系/README.md)
+3. [Update By Query & Reindex API](part-2/7.3-UpdateByQuery&ReindexAPI/README.md)
+4. [Ingest Pipeline & Painless Script](part-2/7.4-IngestPipeline&PainlessScript/README.md)
+6. [Elasticsearch 数据建模实例](part-2/7.5-Elasticsearch数据建模实例/README.md)
+7. [Elasticsearch 数据建模最佳实践](part-2/7.6-Elasticsearch数据建模最佳实践/README.md)
+8. [第二部分总结回顾](part-2/7.7-第二部分总结与测验/README.md)
 ## 第三部分：管理 Elasticsearch 集群
 ### 第 8 章：保护你的数据
-1. 集群身份认证与用户鉴权
-2. 集群内部安全通信
-3. 集群与外部间的安全通信
+1. [集群身份认证与用户鉴权](part-3/8.1-集群身份认证与用户鉴权/README.md)
+2. [集群内部安全通信](part-3/8.2-集群内部安全通信/README.md)
+3. [集群与外部间的安全通信](part-3/8.3-集群与外部间的安全通信/README.md)
 ### 第 9 章：水平扩展 Elasticsearch 集群
-1. 常见的集群部署方式
-2. Hot & Warm 架构与 Shard Filtering
-3. 如何对集群进行容量规划
-4. 分片设计及管理
-5. 在私有云上管理 Elasticsearch 集群的一些方法
-6. 在公有云上管理与部署 Elasticsearch 集群
+1. [常见的集群部署方式](part-3/9.1-常见的集群部署方式/README.md)
+2. [Hot & Warm 架构与 Shard Filtering](part-3/9.2-Hot&Warm架构与ShardFiltering/README.md)
+3. [如何对集群进行容量规划](part-3/9.3-如何对集群进行容量规划/README.md)
+4. [分片设计及管理](part-3/9.4-分片设计及管理/README.md)
+5. [在私有云上管理 Elasticsearch 集群的一些方法](part-3/9.5-在私有云上管理与部署Elasticsearch集群/README.md)
+6. [在公有云上管理与部署 Elasticsearch 集群](part-3/9.6-在公有云上管理与部署Elasticsearch集群/README.md)
 ### 第 10 章：生产环境中的集群运维
-1. 生产环境常用配置与上线清单
-2. 监控 Elasticsearch 集群
-3. 诊断集群的潜在问题  
-4. 解决集群 Yellow 与 Red 的问题
-5. 提升集群写性能
-6. 提升进群读性能
-7. 集群压力测试
+1. [生产环境常用配置与上线清单](part-3/10.1-生产环境常用配置与上线清单/README.md)
+2. [监控 Elasticsearch 集群](part-3/10.2-监控Elasticsearch集群/README.md)
+3. [诊断集群的潜在问题](part-3/10.3-诊断集群的潜在问题/README.md)
+4. [解决集群 Yellow 与 Red 的问题](part-3/10.4-解决集群Yellow与Red的问题/README.md)
+5. [提升集群写性能](part-3/10.5-提升集群写性能/README.md)
+6. [提升进群读性能](part-3/10.7-集群压力测试/README.md)
+7. [集群压力测试](part-3/10.7-集群压力测试/README.md)
 8. 段合并优化及注意事项
-9. 缓存及使用 Breaker 限制内存使用
-10. 一些运维的相关建议
+9. [缓存及使用 Breaker 限制内存使用](part-3/10.9-缓存及使用Breaker限制内存使用/README.md)
+10. [一些运维的相关建议](part-3/10.10-一些运维相关的建议/README.md)
 ### 第 11 章：索引生命周期管理
-1. 使用 Shrink 与 Rollover API 有效管理时间序列索引
+1. [使用 Shrink 与 Rollover API 有效管理时间序列索引](part-3/11.1-使用Shrink与RolloverAPI有效管理时间序列索引/README.md)
 2. 索引全生命周期管理及工具介绍   
 ## 第四部分：利用 ELK 做大数据分析
 ### 第 12 章：用 Logstash 和 Beats 构建数据管道

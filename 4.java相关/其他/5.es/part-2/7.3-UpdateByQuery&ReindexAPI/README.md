@@ -1,19 +1,23 @@
 # Update by Query & Reindex
+![场景](0.png)
+
 ## 课程demo
 ```
+## update by query
+* 在原有数据上,对数据做了重新索引的操作,适用于新增,字段
 DELETE blogs/
 
-# 写入文档
+# 1.写入文档
 PUT blogs/_doc/1
 {
   "content":"Hadoop is cool",
   "keyword":"hadoop"
 }
 
-# 查看 Mapping
+# 2.查看 Mapping
 GET blogs/_mapping
 
-# 修改 Mapping，增加子字段，使用英文分词器
+# 3.修改 Mapping，增加子字段，使用英文分词器
 PUT blogs/_mapping
 {
       "properties" : {
@@ -30,14 +34,14 @@ PUT blogs/_mapping
     }
 
 
-# 写入文档
+# 4.写入新文档
 PUT blogs/_doc/2
 {
   "content":"Elasticsearch rocks",
     "keyword":"elasticsearch"
 }
 
-# 查询新写入文档
+# 5.查询新写入文档,发现更新的新字段在新加的文档中可以查询
 POST blogs/_search
 {
   "query": {
@@ -48,7 +52,7 @@ POST blogs/_search
 
 }
 
-# 查询 Mapping 变更前写入的文档
+# 6.查询 Mapping 变更前写入的文档,发现没法查询到
 POST blogs/_search
 {
   "query": {
@@ -59,13 +63,13 @@ POST blogs/_search
 }
 
 
-# Update所有文档
+# 7.Update所有文档
 POST blogs/_update_by_query
 {
 
 }
 
-# 查询之前写入的文档
+# 8.查询之前写入的文档,发现执行后能查到
 POST blogs/_search
 {
   "query": {
@@ -75,10 +79,10 @@ POST blogs/_search
   }
 }
 
-
+## es不允许修改mapping上原有字段,只能建新索引设置正确类型在导入
 # 查询
 GET blogs/_mapping
-
+发现keyword是text类型,我去改发现报错不让改
 PUT blogs/_mapping
 {
         "properties" : {
@@ -135,7 +139,7 @@ POST  _reindex
 
 GET  blogs_fix/_doc/1
 
-# 测试 Term Aggregation
+# 测试 Term Aggregation,不开启fielddata的text无法做聚合,现在变成了keyword可以了
 POST blogs_fix/_search
 {
   "size": 0,
@@ -191,7 +195,7 @@ POST  _reindex
   "conflicts": "proceed"
 }
 
-# Reindx API，version Type Internal
+# Reindx 只创建不存在的文档
 POST  _reindex
 {
   "source": {
@@ -203,6 +207,11 @@ POST  _reindex
   }
 }
 
+## 夸集群index
+![cluster
+](1.png)
+
+![](2.png)
 
 GET _tasks?detailed=true&actions=*reindex
 

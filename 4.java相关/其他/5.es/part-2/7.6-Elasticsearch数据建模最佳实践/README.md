@@ -1,10 +1,16 @@
 # Elasticsearch 数据建模最佳实践
+![](0.png)
+![](1.png)
+![](2.png)
+![](3.png)
+
+
 
 # 课程demo
 
 ```
 
-###### Cookie Service
+## Cookie Service - 一个mapping文件不断膨胀的例子
 
 ##索引数据，dynamic mapping 会不断加入新增字段
 PUT cookie_service/_doc/1
@@ -25,7 +31,12 @@ PUT cookie_service/_doc/2
  }
 }
 
+解决方案
+![](4.png)
 
+### 不足
+* 使用nested嵌套对象导致查询复杂度加大
+* nested对象在kibana中支持不好,无法可视化分析
 DELETE cookie_service
 #使用 Nested 对象，增加key/value
 PUT cookie_service
@@ -128,17 +139,9 @@ POST cookie_service/_search
 }
 
 
-
-# 在Mapping中加入元信息，便于管理
-PUT softwares/
-{
-  "mappings": {
-    "_meta": {
-      "software_version_mapping": "1.0"
-    }
-  }
-}
-
+## 通配符查询对于es是灾难,解决办法,拆分,将字符串转为对象,在通过bool查询
+![](5.png)
+![](6.png)
 GET softwares/_mapping
 PUT softwares/_doc/1
 {
@@ -231,9 +234,10 @@ POST softwares/_search
 }
 
 
+## 空值导致聚合结果不准
+![](7.png)
 
-
-# Not Null 解决聚合的问题
+# Not Null 解决聚合的问题,将null定为指定值
 DELETE ratings
 PUT ratings
 {
@@ -278,6 +282,18 @@ POST ratings/_search
       "rating": {
         "value": 1
       }
+    }
+  }
+}
+
+
+## 为mappings添加信息,方便版本管理,可在git管理
+# 在Mapping中加入元信息，便于管理
+PUT softwares/
+{
+  "mappings": {
+    "_meta": {
+      "software_version_mapping": "1.0"
     }
   }
 }

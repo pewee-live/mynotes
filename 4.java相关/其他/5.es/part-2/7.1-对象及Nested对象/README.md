@@ -1,4 +1,7 @@
-# 对象及Nested对象
+# 对象及Nested(嵌套)对象
+* 使文档中对象数组的一个对象被独立索引,对象的字段在索引时不会在其他对象中窜
+
+  ![nested](0.png)
 ## 课程demos
 ```
 DELETE blog
@@ -108,6 +111,10 @@ POST my_movies/_doc/1
 }
 
 # 查询电影信息
+用不存在的名字
+这里发现可以查询出来这个电影
+,因为Es中json扁平化了如下图:
+![json扁平化](1.png)
 POST my_movies/_search
 {
   "query": {
@@ -141,7 +148,7 @@ PUT my_movies
     }
 }
 
-
+这里这个actoors被单独存在了不同的lucen中
 POST my_movies/_doc/1
 {
   "title":"Speed",
@@ -160,6 +167,7 @@ POST my_movies/_doc/1
 }
 
 # Nested 查询
+针对嵌套对象查询,使用nested关键字,还要指定path,在本例嵌套对象在actors下面
 POST my_movies/_search
 {
   "query": {
@@ -190,7 +198,7 @@ POST my_movies/_search
 }
 
 
-# Nested Aggregation
+# Nested Aggregation,嵌套对象聚合,需要在aggs中指定nested关键字和path,在在这个聚合中添加一个子聚合
 POST my_movies/_search
 {
   "size": 0,
@@ -212,7 +220,7 @@ POST my_movies/_search
 }
 
 
-# 普通 aggregation不工作
+# nested对象.普通 aggregation不工作
 POST my_movies/_search
 {
   "size": 0,

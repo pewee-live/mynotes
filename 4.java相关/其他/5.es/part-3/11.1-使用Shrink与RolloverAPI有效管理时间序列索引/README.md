@@ -1,4 +1,8 @@
 # 使用 shrink与rolloverAPI有效的管理索引
+## index api
+![](0.png)
+
+
 #课程demo
 ```
 

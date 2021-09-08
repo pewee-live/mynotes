@@ -1,4 +1,7 @@
 # Pipeline 聚合分析
+## 对聚合分析在做一次聚合分析
+![pipeline](0.png)
+
 ## 课程 demo
 ```
 DELETE employees
@@ -45,8 +48,12 @@ PUT /employees/_bulk
 { "name" : "Kathy","age":29,"job":"DBA","gender":"female","salary": 20000}
 
 
-
+## silbing pipeline
 # 平均工资最低的工作类型
+* silbing pipeline聚合和其他聚合同级
+* min_bucket是求之前结果的最小值
+* 通过bucket_path指定路径>表示层级
+min_salary_by_job和job聚合同级,对job下的子聚合avg_salary做再一次计算,最后计算结果也和jobs聚合是同级的
 POST employees/_search
 {
   "size": 0,
@@ -181,7 +188,7 @@ POST employees/_search
 }
 
 
-
+## parent pipeline
 #按照年龄对平均工资求导
 POST employees/_search
 {

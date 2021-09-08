@@ -1,4 +1,11 @@
 # Ingest Pipeline & Painless Script
+* 对数据的预处理
+![](0.png)
+![](1.png)
+![](2.png)
+![](3.png)
+![](4.png)
+![](5.png)
 ## 课程demo
 ```
 #########Demo for Pipeline###############
@@ -14,7 +21,10 @@ PUT tech_blogs/_doc/1
 }
 
 
-# 测试split tags
+# 测试split tags,使用pipeline处理字符串
+* _simulate api,模拟pipeline
+* pipeline. processors定义处理流程
+* docs:测试文档
 POST _ingest/pipeline/_simulate
 {
   "pipeline": {
@@ -125,7 +135,7 @@ PUT _ingest/pipeline/blog_pipeline
 GET _ingest/pipeline/blog_pipeline
 
 
-#测试pipeline
+#测试pipeline,只用blog_pipeline指定pipeline的名字
 POST _ingest/pipeline/blog_pipeline/_simulate
 {
   "docs": [
@@ -160,7 +170,7 @@ PUT tech_blogs/_doc/2?pipeline=blog_pipeline
 POST tech_blogs/_search
 {}
 
-#update_by_query 会导致错误
+#update_by_query 更新会导致错误,因为写入的时候1条pipeline处理过了,一条文档没处理
 POST tech_blogs/_update_by_query?pipeline=blog_pipeline
 {
 }
@@ -180,8 +190,13 @@ POST tech_blogs/_update_by_query?pipeline=blog_pipeline
 }
 
 
-#########Demo for Painless###############
+## Demo for Painless
 
+![](6.png)
+![](7.png)
+![](8.png)
+
+## ingest中painless
 # 增加一个 Script Prcessor
 POST _ingest/pipeline/_simulate
 {
@@ -252,6 +267,8 @@ PUT tech_blogs/_doc/1
   "views":0
 }
 
+
+## _update中painless
 POST tech_blogs/_update/1
 {
   "script": {
@@ -268,7 +285,7 @@ POST tech_blogs/_search
 
 }
 
-#保存脚本在 Cluster State
+#保存脚本在 Cluster State中
 POST _scripts/update_views
 {
   "script":{
@@ -277,6 +294,7 @@ POST _scripts/update_views
   }
 }
 
+直接通过painless 脚本id来调用
 POST tech_blogs/_update/1
 {
   "script": {
@@ -287,7 +305,7 @@ POST tech_blogs/_update/1
   }
 }
 
-
+## _search中painless
 GET tech_blogs/_search
 {
   "script_fields": {
@@ -305,6 +323,8 @@ GET tech_blogs/_search
     "match_all": {}
   }
 }
+
+![脚本保存数量](9.png)
 
 ```
 
