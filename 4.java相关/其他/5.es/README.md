@@ -94,7 +94,8 @@
 ## 第四部分：利用 ELK 做大数据分析
 ### 第 12 章：用 Logstash 和 Beats 构建数据管道
 1. [Logstash 入门及架构介绍](part-4/12.1-Logstash入门及架构介绍/README.md)
-2. Beats 介绍
+2. [利用JDBC插件导入数据到Elasticsearch](part-4/12.2-利用JDBC插件导入数据到Elasticsearch/README.md)
+3. [Beats 介绍](part-4/12.3-Beats介绍/README.md)
 ### 第 13 章：用 Kibana 进行数据可视化分析
 1. 使用 Index Pattern 配置数据
 2. 使用 Kibana Discover 探索数据

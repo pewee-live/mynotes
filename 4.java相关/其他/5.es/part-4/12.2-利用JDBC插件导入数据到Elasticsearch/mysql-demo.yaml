@@ -14,6 +14,7 @@ input {
     record_last_run => true
     #上面运行结果的保存位置
     last_run_metadata_path => "jdbc-position.txt"
+    # sql_last_value就是保存在"jdbc-position.txt"中的last_updated
     statement => "SELECT * FROM user where last_updated >:sql_last_value;"
     schedule => " * * * * * *"
   }
