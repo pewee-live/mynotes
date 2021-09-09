@@ -90,10 +90,10 @@
 10. [一些运维的相关建议](part-3/10.10-一些运维相关的建议/README.md)
 ### 第 11 章：索引生命周期管理
 1. [使用 Shrink 与 Rollover API 有效管理时间序列索引](part-3/11.1-使用Shrink与RolloverAPI有效管理时间序列索引/README.md)
-2. 索引全生命周期管理及工具介绍   
+2. [索引全生命周期管理及工具介绍](part-3/11.2-索引全生命周期管理及工具介绍/README.md)
 ## 第四部分：利用 ELK 做大数据分析
 ### 第 12 章：用 Logstash 和 Beats 构建数据管道
-1. Logstash 入门及架构介绍
+1. [Logstash 入门及架构介绍](part-4/12.1-Logstash入门及架构介绍/README.md)
 2. Beats 介绍
 ### 第 13 章：用 Kibana 进行数据可视化分析
 1. 使用 Index Pattern 配置数据

@@ -1,4 +1,22 @@
 # 索引全生命周期管理及工具介绍
+![为什么需要管理周期](0.png)
+![索引的生命周期](1.jpg)
+## es curator
+![es curator](2.jpg)
+![比较](3.jpg)
+## index lifecycle management
+概念:
+- policy
+	
+ ![* policy流程](4.jpg) 
+ ![* kibana管理policy](5.jpg)
+	
+- phase
+
+hot,warm,cold,delete
+- action
+
+
 ## 课程demo
 ```
 
@@ -6,11 +24,8 @@
 # 具体参考 github下，docker-hot-warm-cold 下的docker-compose 文件
 
 
-
+## 使用api管理policy
 DELETE *
-
-
-
 # 设置 1秒刷新1次，生产环境10分种刷新一次
 PUT _cluster/settings
 {
@@ -19,7 +34,7 @@ PUT _cluster/settings
   }
 }
 
-# 设置 Policy
+# 设置 Policy 一个索引从创建到删除的20S
 PUT /_ilm/policy/log_ilm_policy
 {
   "policy": {
@@ -63,7 +78,7 @@ PUT /_ilm/policy/log_ilm_policy
 
 
 
-# 设置索引模版
+# 设置索引模版,符合ilm_index-*都是用我们刚才设定的log_ilm_policy模板
 PUT /_template/log_ilm_template
 {
   "index_patterns" : [

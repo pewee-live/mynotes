@@ -6,6 +6,14 @@
 ![1](1.png)
 ![2](2.png)
 
+## split indxe shards分裂
+和shrink类似,目标shards数量是原shards数量的倍数,不过不需要分片都在一个节点上,拓展的分片和原分片在一个节点
+
+## rollover index:满足某种条件后创建新index,避免某天突然流量暴增导致index内数据过多占满磁盘
+* 不会自动触发,,结合index lifecycle manage policy 使用
+![3](3.png)
+![4](4.png)
+
 #课程demo
 ```
 
@@ -59,7 +67,7 @@ PUT my_source_index/_doc/1
 
 GET _cat/shards/my_source_index
 
-# 分片数3，会失败
+# 分片数3，会失败,必须能被整除
 POST my_source_index/_shrink/my_target_index
 {
   "settings": {
@@ -109,7 +117,7 @@ POST my_source_index/_shrink/my_target_index
 }
 
 DELETE my_source_index
-## 确保分片都在 hot
+# 确保分片都在 hot
 PUT my_source_index
 {
  "settings": {
@@ -158,7 +166,7 @@ PUT my_target_index/_doc/1
 
 
 
-# Split Index
+##  Split Index 索引分裂
 DELETE my_source_index
 DELETE my_target_index
 
@@ -223,7 +231,7 @@ PUT my_target_index/_doc/1
 
 
 
-#Rollover API
+#Rollover API 
 DELETE nginx-logs*
 # 不设定 is_write_true
 # 名字符合命名规范
@@ -240,7 +248,7 @@ POST nginx_logs_write/_doc
   "log":"something"
 }
 
-
+执行rollover api设定迁移条件,发现生成了新index
 POST /nginx_logs_write/_rollover
 {
   "conditions": {
@@ -249,16 +257,16 @@ POST /nginx_logs_write/_rollover
     "max_size":  "5gb"
   }
 }
-
+对alias操作
 GET /nginx_logs_write/_count
-# 查看 Alias信息
+# 查看 Alias信息,发现已经指向新的索引
 GET /nginx_logs_write
 
 
 DELETE apache-logs*
 
 
-# 设置 is_write_index
+# 对aliases设置 is_write_index,在alias中保留之前的索引
 PUT apache-logs1
 {
   "aliases": {
@@ -274,7 +282,7 @@ POST apache_logs/_doc
   "key":"value"
 }
 
-# 需要指定 target 的名字
+# 需要指定 target 的名字,因为es中rollover api只有在XX-000001的时候才不需要指定
 POST /apache_logs/_rollover/apache-logs8xxxx
 {
   "conditions": {
@@ -285,7 +293,7 @@ POST /apache_logs/_rollover/apache-logs8xxxx
 }
 
 
-# 查看 Alias信息
+# 查看 Alias信息,发现其中有所有rollover 的index
 GET /apache_logs
 
 
