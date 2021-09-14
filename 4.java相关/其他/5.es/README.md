@@ -97,16 +97,16 @@
 2. [利用JDBC插件导入数据到Elasticsearch](part-4/12.2-利用JDBC插件导入数据到Elasticsearch/README.md)
 3. [Beats 介绍](part-4/12.3-Beats介绍/README.md)
 ### 第 13 章：用 Kibana 进行数据可视化分析
-1. 使用 Index Pattern 配置数据
-2. 使用 Kibana Discover 探索数据
-3. 基本可视化组件介绍
-4. 构建 Dashboard  
+1. [使用 Index Pattern 配置数据](part-4/13.1-使用IndexPattern配置数据/README.md)
+2. [使用 Kibana Discover 探索数据](part-4/13.2-使用KibanaDiscover探索数据/README.md)
+3. [基本可视化组件介绍](part-4/13.3-基本可视化组件介绍/README.md)
+4. [构建 Dashboard](part-4/13.4-构建Dashboard/README.md)
 ## 第 14 章：探索 X-Pack 套件
 1. 用 Monitoring 和 Alerting 监控 Elasticsearch 集群
 2. 用 APM 进行程序性能监控
-3. 用机器学习实现时序数据的异常检测（上）
-4. 用机器学习实现时序数据的异常检测(下）
-5. 用 ELK 进行日志管理
+3. [用机器学习实现时序数据的异常检测（上）](part-4/14.3用机器学习实现时序数据的异常检测-上/README.md)
+4. [用机器学习实现时序数据的异常检测(下）](part-4/14.4-用机器学习实现时序数据的异常检测-下/README.md)
+5. [用 ELK 进行日志管理](part-4/14.5-用ELK进行日志管理/README.md)
 6. 用 Canvas 做数据演示
 
 ## 第五部分：应用实战工作坊  

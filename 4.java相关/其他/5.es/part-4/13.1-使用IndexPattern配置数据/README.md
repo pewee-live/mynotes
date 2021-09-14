@@ -64,8 +64,11 @@ curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/bank/account
 #For Windows
 Invoke-RestMethod "http://localhost:9200/_bulk?pretty" -Method Post -ContentType 'application/x-ndjson' -InFile "logs.jsonl"
 
-
+Invoke-RestMethod "http://localhost:9200/bank/account/_bulk?pretty" -Method Post -ContentType 'application/x-ndjson' -InFile "accounts.json"
 
 GET /_cat/indices?v
+
+再kibana 中编辑index pattern
+![0](0.jpg)
 
 ```

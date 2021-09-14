@@ -2,11 +2,11 @@
 ## index api
 ![0](0.png)
 
-## shrink indxe
+## shrink index
 ![1](1.png)
 ![2](2.png)
 
-## split indxe shards分裂
+## split index shards分裂
 和shrink类似,目标shards数量是原shards数量的倍数,不过不需要分片都在一个节点上,拓展的分片和原分片在一个节点
 
 ## rollover index:满足某种条件后创建新index,避免某天突然流量暴增导致index内数据过多占满磁盘
@@ -248,7 +248,7 @@ POST nginx_logs_write/_doc
   "log":"something"
 }
 
-执行rollover api设定迁移条件,发现生成了新index
+对alias执行rollover api设定迁移条件,发现生成了新index
 POST /nginx_logs_write/_rollover
 {
   "conditions": {
@@ -282,8 +282,8 @@ POST apache_logs/_doc
   "key":"value"
 }
 
-# 需要指定 target 的名字,因为es中rollover api只有在XX-000001的时候才不需要指定
-POST /apache_logs/_rollover/apache-logs8xxxx
+# 需要指定 target 的名字,因为es中rollover api只有在XX-数字的时候才不需要指定
+POST /apache_logs/_rollover/apache-logs8
 {
   "conditions": {
     "max_age":   "1d",

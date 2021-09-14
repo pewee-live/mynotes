@@ -1,7 +1,7 @@
 # 使用Kibana Discovery 探索数据
 ## 课程demo
 ```
-
+kibana-discover-选择定义的index-pattern
 设置时间过滤器
 搜索你的数据
 根据字段进行过滤
