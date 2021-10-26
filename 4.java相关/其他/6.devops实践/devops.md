@@ -19,23 +19,79 @@
 ## elk日志
 
 1. es启动
-
+		
+		生成私钥证书:
+		bin/elasticsearch-certutil ca
+		这里生成CA证书,要输入密码
+		节点认证证书公钥
+		bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12
+		修改每个节点的elasticsearch.yml配置,将elastic-stack-ca.p12文件(只需要此文件)复制到每个节点上的Elasticsearch配置目录中的一个目录中。比如我是放到了每个节点的config/certs目录下。
+		设置初始密码:
+		bin/elasticsearch-setup-passwords interactive
+			
+        配置文件:
+		cluster.name: data-center
+		cluster.initial_master_nodes: node-1
+		node.name: node-1
+		network.host: 0.0.0.0
+		xpack.security.enabled: true
+		xpack.security.transport.ssl.enabled: true
+		xpack.security.transport.ssl.verification_mode: certificate
+		xpack.security.transport.ssl.keystore.path: certs/elastic-certificates.p12
+		xpack.security.transport.ssl.truststore.path: certs/elastic-certificates.p12
+		启动:
 		C:\develop\env\elasticsearch-7.14.0\bin\elasticsearch.bat
+		nohup ./elasticsearch  > es.log 2>&1 &
+		firewall-cmd --get-active-zones
+		firewall-cmd --zone=public --list-ports
+		firewall-cmd --zone=public --add-port=9200/tcp --permanent
+		firewall-cmd --zone=public --add-port=9300/tcp --permanent
+		firewall-cmd --reload
+
+	常见错误:	
+	
+	1. bootstrap check failure [1] of [3]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
+
+			ulimit -Hn
+			ulimit -Sn
+	2. bootstrap check failure [2] of [3]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+
+			vi /etc/sysctl.conf
+			增加配置vm.max_map_count=262144
+			sysctl -p
+	3. bootstrap check failure [3] of [3]: the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_master_nodes] must be configured
+	4. 只监听ipv6 导致无法访问
+
+			vi /etc/default/grub
+			add ipv6.disable=1 at line 6,like:
+			GRUB_CMDLINE_LINUX="ipv6.disable=1 ..."
+			grub2-mkconfig -o /boot/grub2/grub.cfg
+			reboot
+
+
 
 2. kibana
-
+		
+		修改配置:
+		server.host: "0.0.0.0"
+		elasticsearch.username: "kibana"
+		elasticsearch.password: "000000"
+		i18n.locale: "zh-CN"
 		C:\develop\env\kibana-7.14.0-windows-x86_64\bin\kibana.bat
+		nohup ./kibana  > kb.log 2>&1 &
+		firewall-cmd --zone=public --add-port=5601/tcp --permanent
+		firewall-cmd --reload
 
 3. logstash
 	
 		java日志:2021-09-23 16:26:28 |INFO  |main |HuaWeiSendMailService.java:51 |com.opto.service.huawei_mail.HuaWeiSendMailService | sendHuaweiProductDetailMail |发送华为发货邮件-开始
 		logstash文件配置1:
 		input {
-		  stdin {
-		  }
-		  #beats {
-		  #  port => 7110
+		  #stdin {
 		  #}
+		  beats {
+		    port => 7110
+		  }
 		  
 		}
 		filter {
@@ -44,24 +100,47 @@
 		    #convert => [ "[geoip][coordinates]", "float" ]
 		   }
 		 grok {
-		        match => { "message" => '(?<datetime>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}) \|(?<loglevel>[A-Z\s]{4,5}) \|(?<thread>[A-Za-z0-9/-]{4,40}) \|(?<content>.*)' }
+		        match => { "message" => '(?<datetime>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{3}) \|(?<loglevel>[A-Z\s]{4,5}) \|(?<thread>[A-Za-z0-9/-]{4,40}) \|(?<content>.*)' }
 		    }
 		 mutate {
 		    strip => ["loglevel"]
 		    remove_field => ["message"]
 		  }
 		 date {
-		    match => [ "datetime", "YYYY-MM-dd HH:mm:ss" ]
+		    match => [ "datetime", "YYYY-MM-dd HH:mm:ss.SSS" ]
 		    locale => cn
 		    }
 		}
 		
 		output {
-		   #elasticsearch {
-		   #  hosts => "http://localhost:9200"
-		   #  index => "bsp-%{+YYYY.MM.dd}"
-		   #}
-		   stdout { codec => rubydebug }
+		   if [app] == "bsp" {
+		       if [logtype] == "dev" {
+		           elasticsearch {
+		             hosts => "http://192.168.7.49:9200"
+		             user => "elastic"
+		             password => "000000"
+		             index => "bsp-dev-%{+YYYY.MM.dd}"
+		           }
+		       }
+		       if [logtype] == "sit" {
+		           elasticsearch {
+		             hosts => "http://192.168.7.49:9200"
+		             user => "elastic"
+		             password => "000000"
+		             index => "bsp-sit-%{+YYYY.MM.dd}"
+		           }
+		       }
+		       if [logtype] == "prd" {
+		           elasticsearch {
+		             hosts => "http://192.168.7.49:9200"
+		             user => "elastic"
+		             password => "000000"
+		             index => "bsp-prd-%{+YYYY.MM.dd}"
+		           }
+		       }
+		   }
+		   
+		   #stdout { codec => rubydebug }
 		}
 		配置2:
 		input {
@@ -106,11 +185,17 @@
 		   #}
 		   stdout { codec => rubydebug }
 		}
+
+		启动:nohup ./logstash  -f logstash4.conf > ls.log 2>&1 &
+		firewall-cmd --zone=public --add-port=7110/tcp --permanent
+		firewall-cmd --reload
 具体pattern参考:
 
 	1. https://github.com/logstash-plugins/logstash-patterns-core/blob/master/patterns/ecs-v1/grok-patterns
 	2. https://blog.csdn.net/zhengzaifeidelushang/article/details/101271007
 	3. https://grokdebug.herokuapp.com/
+
+
 
 4. filebeats
 
@@ -125,6 +210,11 @@
 	  paths:
 	    - C:\Users\pewee\logs\bsp\*.log
 	    #- c:\programdata\elasticsearch\logs\*
+      # 如果值为ture，那么fields存储在输出文档的顶级位置
+	  fields_under_root: true   
+	  fields:
+	    app: bsp
+	    logtype: dev
 	
 	  # Exclude lines. A list of regular expressions to match. It drops the lines that are
 	  # matching any regular expression from the list.
@@ -150,7 +240,7 @@
 	  # for Java Stack Traces or C-Line Continuation
 	
 	  # The regexp Pattern that has to be matched. The example pattern matches all lines starting with [
-	  multiline.pattern: ^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}
+	  multiline.pattern: ^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{3}
 	
 	  # Defines if the pattern set under pattern should be negated or not. Default is false.
 	  multiline.negate: true
