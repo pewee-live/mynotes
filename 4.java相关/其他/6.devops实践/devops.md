@@ -262,6 +262,37 @@
 	
 	  # Client Certificate Key
 	  #ssl.key: "/etc/pki/client/cert.key"
+	  
+		解决filebeats自动停止的方法:做成服务随系统启动
+		vi /usr/lib/systemd/system/filebeat.service
+		filebeat.service文件内容:
+
+		[Unit]
+		Description=Filebeat sends log files to Logstash or directly to Elasticsearch.
+		Documentation=https://www.elastic.co/products/beats/filebeat
+		Wants=network-online.target
+		After=network-online.target
+		 
+		[Service]
+		Type=simple
+		Environment="LOG_OPTS=-e"
+		Environment="CONFIG_OPTS=-c /usr/local/src/filebeat-7.10.1-linux-x86_64/filebeat.yml"
+		Environment="PATH_OPTS=-path.home /usr/local/src/filebeat-7.10.1-linux-x86_64/filebeat -path.config /usr/local/src/filebeat-7.10.1-linux-x86_64/filebeat -path.data /usr/local/src/filebeat-7.10.1-linux-x86_64/data -path.logs /usr/local/src/filebeat-7.10.1-linux-x86_64/logs"
+		ExecStart=/usr/local/src/filebeat-7.10.1-linux-x86_64/filebeat $LOG_OPTS $CONFIG_OPTS $PATH_OPTS
+		 
+		Restart=always
+		 
+		[Install]
+		WantedBy=multi-user.target
+
+
+
+
+		chmod +x /usr/lib/systemd/system/filebeat.service
+		 
+		systemctl daemon-reload
+		systemctl enable filebeat
+		systemctl start filebeat
 
 5. kibana-stack-manament-index-patern,新建一个index-patern
 6. kibana-discover可以看到数据
