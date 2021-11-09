@@ -103,15 +103,65 @@ NioEventLoop.processSelectedKey(SelectionKey, AbstractNioChannel)方法中
                 decreaseNow = false;
             }
 
-注意:读取数据流程由nio线程触发,并传播到流水线,读是一个inbound的过程,由pipeline流水线的head->tail.
+注意:读取数据流程由nio线程触发,并传播到流水线(在流水线上我们可以切换为用户线程来执行一些操作,以免NIO线程阻塞,如pipeline.addLast(executor,handler)就可以为自定义handler自定义线程池,在DefaultChannelPipeline.fireChannelRead(Object)中若有自定义线程,则会切换自定义线程来读),读是一个inbound的过程,由pipeline流水线的head->tail.
+
+读的inbound切换线程逻辑见 AbstractChannelHandlerContext#invokeChannelRead 
+
+    static void invokeChannelRead(final AbstractChannelHandlerContext next, Object msg) {
+        final Object m = next.pipeline.touch(ObjectUtil.checkNotNull(msg, "msg"), next);
+		//获取下一个handler的 executor,也就是我们在pipeline.addLast(executor,handler)中指定的线程池中的子线程       
+		EventExecutor executor = next.executor();
+		//我们指定的executor的thread,这里的看是不是eventloop的逻辑简单暴力,看当前线程是不是和自己的线程是一个线程,在这里他肯定不是inEventLoop,因为现在在nio线程里!!!
+        if (executor.inEventLoop()) {
+			//未指定线程池的话这里的线程是nio线程,channel的handler拿到的都是channel注册到的那个nio线程,进这个逻辑,继续用nio线程乡下传播
+            next.invokeChannelRead(m);
+        } else {
+			//若为自定义线程,直接用自定义线程执行读
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    next.invokeChannelRead(m);
+                }
+            });
+        }
+    }
+
+这里的逻辑同样也适用于用户自定义线程切换到nio线程:目前线程为自定义线程的,调用下一个handler若未指定线程池,则为nio线程,那目前线程和nio的线程不同,会进下面的逻辑,nio线程会把打包成task放入队列.在下一次loop中由nio线程执行,这样就完成了线程切换!!!
+
+### outbound
 
 outbound是从tail-> head
 
 在DefaultChennelPipeline中有headhandler和tailhandler
 
-从读的流程是从head-> 用户定义的handler -> tailerhandler,要是msg到tailhandler还没被处理的话,tailhandler会抛出异常!
 
-相反,ctx.write操作和ctx.writeAndFlush的代码见DefaultChannelPipeline
+从读的流程是从head-> 用户定义的handler -> tailerhandler,要是任何inbound(read,active)到tailhandler还没被处理的话,tailhandler会有默认处理方法 onUnhandledXXXXX,比如read这里就会释放该MSg的引用,释放资源让垃圾回收回收掉;
+
+如下:
+
+		@Override
+        public void channelActive(ChannelHandlerContext ctx) {
+            onUnhandledInboundChannelActive();
+        }
+
+        @Override
+        public void channelInactive(ChannelHandlerContext ctx) {
+            onUnhandledInboundChannelInactive();
+        }
+
+        @Override
+        public void channelWritabilityChanged(ChannelHandlerContext ctx) {
+            onUnhandledChannelWritabilityChanged();
+
+相反,ctx.channel().write操作和ctx.channel().writeAndFlush的代码见AbstractChannel.writeAndFlush(Object),
+
+    @Override
+    public ChannelFuture writeAndFlush(Object msg) {
+        return pipeline.writeAndFlush(msg);
+    }
+
+他的实现在DefaultChannelPipeline  :
+
 
 	    @Override
 	    public final ChannelFuture write(Object msg, ChannelPromise promise) {
@@ -122,13 +172,51 @@ outbound是从tail-> head
 	    public final ChannelFuture writeAndFlush(Object msg, ChannelPromise promise) {
 	        return tail.writeAndFlush(msg, promise);
 	    }
-可以发现,所有的写操作都是由tailhandler -> 用户handler-> headhandler,
+可以发现,ctx.channel()的写操作都是由tailhandler -> 用户handler-> headhandler,
 
-先来看tailHanler:
+再来看ctx.write和ctx.writeAndFlush(Object);
+发现直接调用的是AbstractChannelHandlerContext.write(Object, boolean, ChannelPromise),这个下面来讲;大概逻辑是从当前handler的下一个handler的write开始执行!
 
-![tail](pic2/2.jpg)
+在回到tailHandler;tail.write和tail.writeAndFlush的区别就是实际调用AbstractChannelHandlerContext.write(Object, boolean, ChannelPromise)的时候中间的flush一个为true一个为false
 
-我们发现在tailhandler里面会判断调用方是否是nioworker线程,不是的话会打包成task切换到nio线程去执行write();
+先来看AbstractChannelHandlerContext.write:
+
+![ctx](pic2/2.jpg)
+
+
+pipeline.touch用于引用计数,防止内存泄漏
+我们发现这里的套路和AbstractChannelHandlerContext#invokeChannelRead切换线程逻辑一致.在AbstractChannelHandlerContext.write里面会拿到下一个handler自定义线程池(若我们定义handler的时候没有定义,他就是这个channel所register的eventloop线程),看当前线程是否和下一个executor的线程一致,一致的话就会直接执行,否则会调用自定义线程执行(nio->自定义)或nio线程打包成task(自定义->nio);
+
+再来看AbstractChannelHandlerContext#invokeWriteAndFlush和#invokeWrite
+
+    void invokeWriteAndFlush(Object msg, ChannelPromise promise) {
+        if (invokeHandler()) {
+            invokeWrite0(msg, promise);
+            invokeFlush0();
+        } else {
+            writeAndFlush(msg, promise);
+        }
+    }
+
+其实就是调用下个handler的invokeWrite0,这会级联触发流水线的链调用
+
+在write0完成后再流水线上传播flush的链调用,如下图
+
+    private void invokeWrite0(Object msg, ChannelPromise promise) {
+        try {
+            ((ChannelOutboundHandler) handler()).write(this, msg, promise);
+        } catch (Throwable t) {
+            notifyOutboundHandlerException(t, promise);
+        }
+    }
+
+    private void invokeFlush0() {
+        try {
+            ((ChannelOutboundHandler) handler()).flush(this);
+        } catch (Throwable t) {
+            invokeExceptionCaught(t);
+        }
+    }
 
 
 
@@ -140,3 +228,181 @@ outbound是从tail-> head
         }
 
 我们发现DefaultChannelPipeline.HeadContext.write(ChannelHandlerContext, Object, ChannelPromise)实际上调用unsafe.write
+
+我们来看AbstractChannel.AbstractUnsafe.write(Object, ChannelPromise),
+
+        @Override
+        public final void write(Object msg, ChannelPromise promise) {
+            assertEventLoop();
+
+            ChannelOutboundBuffer outboundBuffer = this.outboundBuffer;
+            if (outboundBuffer == null) {
+                try {
+                    // channel关闭了,释放资源以免内存泄露
+                    ReferenceCountUtil.release(msg);
+                } finally {
+                    // If the outboundBuffer is null we know the channel was closed and so
+                    // need to fail the future right away. If it is not null the handling of the rest
+                    // will be done in flush0()
+                    // See https://github.com/netty/netty/issues/2362
+                    safeSetFailure(promise,
+                            newClosedChannelException(initialCloseCause, "write(Object, ChannelPromise)"));
+                }
+                return;
+            }
+
+            int size;
+            try {
+				//计算msg的大概size
+                msg = filterOutboundMessage(msg);
+                size = pipeline.estimatorHandle().size(msg);
+                if (size < 0) {
+                    size = 0;
+                }
+            } catch (Throwable t) {
+                try {
+                    ReferenceCountUtil.release(msg);
+                } finally {
+                    safeSetFailure(promise, t);
+                }
+                return;
+            }
+			//消息放入channel的缓存链表
+            outboundBuffer.addMessage(msg, size, promise);
+        }
+
+可以看见核心就是 outboundBuffer.addMessage(msg, size, promise);这个outboundBuffer为每个socketChannel的一个送缓冲.
+
+    public void addMessage(Object msg, int size, ChannelPromise promise) {
+        Entry entry = Entry.newInstance(msg, size, total(msg), promise);
+        if (tailEntry == null) {
+            flushedEntry = null;
+        } else {
+            Entry tail = tailEntry;
+            tail.next = entry;
+        }
+        tailEntry = entry;
+        if (unflushedEntry == null) {
+            unflushedEntry = entry;
+        }
+
+        // increment pending bytes after adding message to the unflushed arrays.
+        // See https://github.com/netty/netty/issues/1619
+		//
+		//根据这次要写的数据,更新看目前还有多少数据在缓冲区没有处理完,如果没有处理的内容过多大于写高水位线,就把buffer的状态设置为不可写,并在pipeline上传播@Override
+    ChannelPipeline fireChannelWritabilityChanged();可以由用户决定怎么处理接下来的内容
+        incrementPendingOutboundBytes(entry.pendingSize, false);
+    }
+
+也就是说write方法其实只是把消息加入了outboundBuffer;并没有真正发送.outboundBuffer是一个链表的结构,每次的write都会在链表节点的结尾添加一个Entry,并把第一个没flush的Entry指向unflushedEntry.接下来开始flush了
+
+再来看AbstractChannel.AbstractUnsafe#flush
+
+        @Override
+        public final void flush() {
+            assertEventLoop();
+
+            ChannelOutboundBuffer outboundBuffer = this.outboundBuffer;
+            if (outboundBuffer == null) {
+                return;
+            }
+
+            outboundBuffer.addFlush();
+            flush0();
+        }
+
+
+其中outboundBuffer.addFlush();把链表的第一个没flush的Entry取出来,往下遍历,标记成flush,把unflushedEntry标记为null,整个链表变成了一个以flushedEntry为头节点的链表.准备发送!!
+
+    public void addFlush() {
+        // There is no need to process all entries if there was already a flush before and no new messages
+        // where added in the meantime.
+        //
+        // See https://github.com/netty/netty/issues/2577
+        Entry entry = unflushedEntry;
+        if (entry != null) {
+            if (flushedEntry == null) {
+                // there is no flushedEntry yet, so start with the entry
+                flushedEntry = entry;
+            }
+            do {
+                flushed ++;
+                if (!entry.promise.setUncancellable()) {
+                    // Was cancelled so make sure we free up memory and notify about the freed bytes
+                    int pending = entry.cancel();
+                    decrementPendingOutboundBytes(pending, false, true);
+                }
+                entry = entry.next;
+            } while (entry != null);
+
+            // All flushed so reset unflushedEntry
+            unflushedEntry = null;
+        }
+    }
+
+再来看flush0里面的doWrite(outboundBuffer);他的实现在NioSocketChannel.doWrite(ChannelOutboundBuffer)
+
+    @Override
+    protected void doWrite(ChannelOutboundBuffer in) throws Exception {
+        SocketChannel ch = javaChannel();
+        int writeSpinCount = config().getWriteSpinCount();
+        do {
+            if (in.isEmpty()) {
+                // All written so clear OP_WRITE
+                clearOpWrite();
+                // Directly return here so incompleteWrite(...) is not called.
+                return;
+            }
+
+            // Ensure the pending writes are made of ByteBufs only.
+            int maxBytesPerGatheringWrite = ((NioSocketChannelConfig) config).getMaxBytesPerGatheringWrite();
+            ByteBuffer[] nioBuffers = in.nioBuffers(1024, maxBytesPerGatheringWrite);
+            int nioBufferCnt = in.nioBufferCount();
+
+            // Always use nioBuffers() to workaround data-corruption.
+            // See https://github.com/netty/netty/issues/2761
+            switch (nioBufferCnt) {
+                case 0:
+                    // We have something else beside ByteBuffers to write so fallback to normal writes.
+                    writeSpinCount -= doWrite0(in);
+                    break;
+                case 1: {
+                    // Only one ByteBuf so use non-gathering write
+                    // Zero length buffers are not added to nioBuffers by ChannelOutboundBuffer, so there is no need
+                    // to check if the total size of all the buffers is non-zero.
+                    ByteBuffer buffer = nioBuffers[0];
+                    int attemptedBytes = buffer.remaining();
+                    final int localWrittenBytes = ch.write(buffer);
+                    if (localWrittenBytes <= 0) {
+                        incompleteWrite(true);
+                        return;
+                    }
+                    adjustMaxBytesPerGatheringWrite(attemptedBytes, localWrittenBytes, maxBytesPerGatheringWrite);
+                    in.removeBytes(localWrittenBytes);
+                    --writeSpinCount;
+                    break;
+                }
+                default: {
+                    // Zero length buffers are not added to nioBuffers by ChannelOutboundBuffer, so there is no need
+                    // to check if the total size of all the buffers is non-zero.
+                    // We limit the max amount to int above so cast is safe
+                    long attemptedBytes = in.nioBufferSize();
+                    final long localWrittenBytes = ch.write(nioBuffers, 0, nioBufferCnt);
+                    if (localWrittenBytes <= 0) {
+                        incompleteWrite(true);
+                        return;
+                    }
+                    // Casting to int is safe because we limit the total amount of data in the nioBuffers to int above.
+                    adjustMaxBytesPerGatheringWrite((int) attemptedBytes, (int) localWrittenBytes,
+                            maxBytesPerGatheringWrite);
+                    in.removeBytes(localWrittenBytes);
+                    --writeSpinCount;
+                    break;
+                }
+            }
+        } while (writeSpinCount > 0);
+
+        incompleteWrite(writeSpinCount < 0);
+    }
+
+这里才是真正发送的核心部分
