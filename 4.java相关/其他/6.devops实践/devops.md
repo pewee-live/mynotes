@@ -22,7 +22,7 @@
 		
 		生成私钥证书:
 		bin/elasticsearch-certutil ca
-		这里生成CA证书,要输入密码
+		这里生成CA证书,要输入密码，我这写空密码
 		节点认证证书公钥
 		bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12
 		修改每个节点的elasticsearch.yml配置,将elastic-stack-ca.p12文件(只需要此文件)复制到每个节点上的Elasticsearch配置目录中的一个目录中。比如我是放到了每个节点的config/certs目录下。
@@ -35,10 +35,18 @@
 		node.name: node-1
 		network.host: 0.0.0.0
 		xpack.security.enabled: true
+		#集群https传输
 		xpack.security.transport.ssl.enabled: true
 		xpack.security.transport.ssl.verification_mode: certificate
 		xpack.security.transport.ssl.keystore.path: certs/elastic-certificates.p12
 		xpack.security.transport.ssl.truststore.path: certs/elastic-certificates.p12
+		#这里以下可选开启api接口https传输
+		xpack.security.authc.api_key.enabled: true
+		xpack.security.http.ssl.enabled: true
+		xpack.security.http.ssl.keystore.path: elastic-certificates.p12
+		xpack.security.http.ssl.truststore.path: elastic-certificates.p12
+		xpack.security.http.ssl.client_authentication: none
+		xpack.http.ssl.verification_mode: none
 		启动:
 		C:\develop\env\elasticsearch-7.14.0\bin\elasticsearch.bat
 		nohup ./elasticsearch  > es.log 2>&1 &
@@ -81,6 +89,9 @@
 		nohup ./kibana  > kb.log 2>&1 &
 		firewall-cmd --zone=public --add-port=5601/tcp --permanent
 		firewall-cmd --reload
+
+若是es开启了https访问,修改一下elasticsearch.hosts: ["https://localhost:9200"]
+elasticsearch.ssl.verificationMode: none
 
 3. logstash
 	
@@ -195,6 +206,16 @@
 	2. https://blog.csdn.net/zhengzaifeidelushang/article/details/101271007
 	3. https://grokdebug.herokuapp.com/
 
+当es开启了ssl的时候,logstash 不能够直接使用 PKCS#12类型的证书！
+我们需要 第三种命令，去 logstash-node-1.p12 的证书中提取 pem证书
+openssl pkcs12 -in logstash-node-1.p12 -clcerts -nokeys -chain -out ca.pem
+执行后会得到logstash使用的pem证书，名为 ca.pem
+
+在logstash.conf里
+ssl => true
+cacert => "/app/elk/logstash-7.15.1/config/ca.pem"
+
+在logstash.yml里配置https,账号,密码和cert路径
 
 
 4. filebeats
@@ -277,7 +298,9 @@
 		Type=simple
 		Environment="LOG_OPTS=-e"
 		Environment="CONFIG_OPTS=-c /usr/local/src/filebeat-7.10.1-linux-x86_64/filebeat.yml"
+		#这个Env-PATH_OPTS可不要
 		Environment="PATH_OPTS=-path.home /usr/local/src/filebeat-7.10.1-linux-x86_64/filebeat -path.config /usr/local/src/filebeat-7.10.1-linux-x86_64/filebeat -path.data /usr/local/src/filebeat-7.10.1-linux-x86_64/data -path.logs /usr/local/src/filebeat-7.10.1-linux-x86_64/logs"
+		#PATH_OPTS可不要
 		ExecStart=/usr/local/src/filebeat-7.10.1-linux-x86_64/filebeat $LOG_OPTS $CONFIG_OPTS $PATH_OPTS
 		 
 		Restart=always
@@ -293,6 +316,7 @@
 		systemctl daemon-reload
 		systemctl enable filebeat
 		systemctl start filebeat
+		journalctl
 
 5. kibana-stack-manament-index-patern,新建一个index-patern
 6. kibana-discover可以看到数据
