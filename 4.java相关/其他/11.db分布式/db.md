@@ -425,15 +425,74 @@ ADD RESOURCE test (
     USER=root,
     PASSWORD=root,
     PROPERTIES("maximumPoolSize"=10,"idleTimeout"="30000")
-)
+);
+
+DROP  RESOURCE test ;
+
+ADD RESOURCE test02 (
+    URL="jdbc:mysql://127.0.0.1:3306/test02?serverTimezone=UTC&useSSL=false",
+    USER=root,
+    PASSWORD=daohao4ggg,
+    PROPERTIES("maximumPoolSize"=10,"idleTimeout"="30000")
+);
+
+ADD RESOURCE test03 (
+    URL="jdbc:mysql://127.0.0.1:3306/test03?serverTimezone=UTC&useSSL=false",
+    USER=root,
+    PASSWORD=daohao4ggg,
+    PROPERTIES("maximumPoolSize"=10,"idleTimeout"="30000")
+);
+
+SHOW SCHEMA RESOURCES;
+
 
 2. 修改所有表的分片规则
 
+实验:
 ALTER SHARDING TABLE RULE t_map (
-RESOURCES(test),
+RESOURCES(test2, test3),
 SHARDING_COLUMN=id,
-TYPE(NAME=hash_mod,PROPERTIES("sharding-count"=1))
+TYPE(NAME=hash_mod,PROPERTIES("sharding-count"=16)),
+GENERATED_KEY(COLUMN=id,TYPE(NAME=snowflake,PROPERTIES("worker-id"=123)))
 );
+
+
+ALTER SHARDING ALGORITHM database_inline (
+TYPE(NAME=INLINE,PROPERTIES("algorithm-expression"="test0${id % 2}"))
+);
+
+ALTER SHARDING ALGORITHM map_inline (
+TYPE(NAME=inline,PROPERTIES("algorithm-expression"="t_map0${id % 3}"))
+);
+
+ALTER SHARDING TABLE RULE t_map (
+DATANODES("test0${0..1}.t_map0${0..2}"),
+DATABASE_STRATEGY(TYPE=standard,SHARDING_COLUMN=id,SHARDING_ALGORITHM=database_inline),
+TABLE_STRATEGY(TYPE=standard,SHARDING_COLUMN=id,SHARDING_ALGORITHM=map_inline),
+KEY_GENERATE_STRATEGY(COLUMN=id,KEY_GENERATOR=snowflake)
+);
+
+ALTER SHARDING ALGORITHM database_inline (
+TYPE(NAME=INLINE,PROPERTIES("algorithm-expression"="test0${id % 2 + 2}"))
+);
+
+ALTER SHARDING ALGORITHM map_inline (
+TYPE(NAME=inline,PROPERTIES("algorithm-expression"="t_map0${id % 3}"))
+);
+
+ALTER SHARDING TABLE RULE t_map (
+DATANODES("test0${2..3}.t_map0${0..2}"),
+DATABASE_STRATEGY(TYPE=standard,SHARDING_COLUMN=id,SHARDING_ALGORITHM=database_inline),
+TABLE_STRATEGY(TYPE=standard,SHARDING_COLUMN=id,SHARDING_ALGORITHM=map_inline),
+KEY_GENERATE_STRATEGY(COLUMN=id,KEY_GENERATOR=snowflake)
+);
+
+查看新规则:
+SHOW  SHARDING TABLE RULE t_map;
+查看现有规则:
+preview select count(1) from t_map;
+
+发现新的规则已经写入,但是历史数据并没有迁移.
 
 其他配置参考:https://shardingsphere.apache.org/document/5.1.0/cn/user-manual/shardingsphere-scaling/usage/
 
@@ -452,7 +511,12 @@ TYPE(NAME=hash_mod,PROPERTIES("sharding-count"=1))
 ![status](pic/4.JPG)
 
 
-在表t_map中插入新数据,发现新配置的数据源中的t_map_0中也出现了数据;
+> stop scaling 631803768714408;
+
+> drop scaling 631803768714408;
+
+
+在表t_map中插入新数据,发现新配置的数据源中的t_map中也出现了数据;
 
 通过preview select count(1) from t_order;看新的数据到哪里去
 
@@ -511,6 +575,28 @@ E:Eventually Constistent 最终一致性
 
 1. seata-TCC/AT
 2. hmily-tcc
+
+实战:
+
+修改server.yaml
+> 
+rules:
+  - !AUTHORITY
+    users:
+      - root@%:root
+      - sharding@:sharding
+    provider:
+      type: ALL_PRIVILEGES_PERMITTED
+  - !TRANSACTION
+    defaultType: BASE
+    providerType: Seata
+
+
+下载[seata](https://seata.io/zh-cn/blog/download.html)
+
+我这里用的是1.4.2版本
+
+
 
 
 
