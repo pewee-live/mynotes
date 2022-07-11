@@ -154,7 +154,45 @@ POST users/_search
 GET users/_mapping
 
 ```
+PUT test-mapping/_doc/1
+{
+  "name" : "pewee",
+  "time" : "2022-07-06 00:00:00"
+}
 
+GET test-mapping/_doc/1
+
+GET test-mapping/_mapping
+DELETE test-mapping/_doc/1
+DELETE test-mapping
+PUT test-mapping
+{
+  
+    "mappings" : {
+      "properties" : {
+        "name" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          }
+        },
+        "time" : {
+          "type" : "date",
+          "format" : "yyyy-MM-dd HH:mm:ss",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          }
+        }
+      }
+    }
+  
+}
 
 ## 补充阅读
 - Mapping Parameters https://www.elastic.co/guide/en/elasticsearch/reference/7.1/mapping-params.html

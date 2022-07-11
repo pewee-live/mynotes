@@ -44,7 +44,7 @@ POST blogs/_search
 }
 
 通过tie_breaker添加后算分结果会将最评分_score+tie_breaker*其他匹配语句
-0表示没加,1表示每条都相等,和bool的should一样了
+0表示没加和best_field场景相同,1表示每条都相等,和bool的should一样了
 POST blogs/_search
 {
     "query": {

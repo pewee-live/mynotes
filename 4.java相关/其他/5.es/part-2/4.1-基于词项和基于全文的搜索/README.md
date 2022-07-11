@@ -1,5 +1,5 @@
 # 基于词项和基于全文的搜索
-
+match query,matchphase和queryString会对输入分词在做查询
 ## 课程demo
 
 ```
@@ -71,6 +71,50 @@ POST /products/_search
   }
 }
 
+//当然也可以用match查询,match查询会对查询分词
+//这里查不出来
+POST /bsp-prd-2022.07.07/_search
+{
+  "query": {
+    "term": {
+      "content": {
+        "value": "登录"
+      }
+    }
+    
+  }
+}
+//这里可以,因为对输入做了分词
+POST /bsp-prd-2022.07.07/_search
+{
+  "query": {
+    "match": {
+      "content": "登和录"
+    }
+    
+  }
+}
+//这个查不到,换成登录可以
+POST /bsp-prd-2022.07.07/_search
+{
+  "query": {
+    "match_phrase": {
+      "content": "登和录"
+    }
+    
+  }
+}
+//queryString可以查询
+POST /bsp-prd-2022.07.07/_search
+{
+  "query": {
+    "query_string": {
+      "default_field": "content",
+      "query": "登 OR 录"
+    }
+    
+  }
+}
 
 
 ##term查询返回结果会有算分过程,

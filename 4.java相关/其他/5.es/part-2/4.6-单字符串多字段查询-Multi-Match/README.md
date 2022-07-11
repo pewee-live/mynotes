@@ -175,10 +175,13 @@ GET /titles/_search
 
 1.当想query的词全部出现在制定fields中的时候,无法使用operator=and,算分是出现在各个字段上不好算分
 2. 用copyto占用额外空间 
+
+//这样查不出来,因为使用and 要求query的词全部要出现在某一个字段
 {
    "query": {
         "multi_match": {
             "query":  "5 street AAA",
+            "operator" : "and",
             "type":   "most_fields",
             "fields": [ "street", "city" ,"country","postcode"]
         }
@@ -192,6 +195,7 @@ GET /titles/_search
    "query": {
         "multi_match": {
             "query":  "5 street AAA",
+            "operator" : "and",
             "type":   "cross_fields",
             "fields": [ "street", "city" ,"country","postcode"]
         }

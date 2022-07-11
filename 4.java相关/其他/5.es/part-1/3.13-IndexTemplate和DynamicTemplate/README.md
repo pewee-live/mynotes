@@ -72,7 +72,7 @@ DELETE /_template/template_test
 
 
 
-#Dynaminc Mapping 是定义在某个index的mapping中的,根据类型和字段名
+#Dynaminc Mapping 是定义在某个index的mapping中的,根据类型和字段名,动态设置字段类型
 DELETE my_index
 
 PUT my_index/_doc/1
@@ -110,7 +110,7 @@ PUT my_index
 
 
 DELETE my_index
-#结合路径
+#结合路径,这里会把name下的属性,除了middle的全都开被盗一个full_name的text的字段里
 PUT my_index
 {
   "mappings": {
