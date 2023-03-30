@@ -30,46 +30,47 @@
 		bin/elasticsearch-setup-passwords interactive
 			
         配置文件:
-		cluster.name: data-center
-		cluster.initial_master_nodes: node-1
-		node.name: node-1
-		network.host: 0.0.0.0
-		xpack.security.enabled: true
-		#集群https传输
-		xpack.security.transport.ssl.enabled: true
-		xpack.security.transport.ssl.verification_mode: certificate
-		xpack.security.transport.ssl.keystore.path: certs/elastic-certificates.p12
-		xpack.security.transport.ssl.truststore.path: certs/elastic-certificates.p12
-		#这里以下可选开启api接口https传输
-		xpack.security.authc.api_key.enabled: true
-		xpack.security.http.ssl.enabled: true
-		xpack.security.http.ssl.keystore.path: elastic-certificates.p12
-		xpack.security.http.ssl.truststore.path: elastic-certificates.p12
-		xpack.security.http.ssl.client_authentication: none
-		xpack.http.ssl.verification_mode: none
-		启动:
-		C:\develop\env\elasticsearch-7.14.0\bin\elasticsearch.bat
-		nohup ./elasticsearch  > es.log 2>&1 &
-		firewall-cmd --get-active-zones
-		firewall-cmd --zone=public --list-ports
-		firewall-cmd --zone=public --add-port=9200/tcp --permanent
-		firewall-cmd --zone=public --add-port=9300/tcp --permanent
-		firewall-cmd --reload
-
+	    cluster.name: data-center
+	    cluster.initial_master_nodes: node-1
+	    node.name: node-1
+	    network.host: 0.0.0.0
+	    xpack.security.enabled: true
+	    #集群节点之间https传输(基础安全)
+	    xpack.security.transport.ssl.enabled: true
+	    xpack.security.transport.ssl.verification_mode: certificate
+	    xpack.security.transport.ssl.keystore.path: certs/elastic-certificates.p12
+	    xpack.security.transport.ssl.truststore.path: certs/elastic-certificates.p12
+	    xpack.security.transport.ssl.client_authentication: required
+	    #这里以下可选开启api接口https传输(进阶安全)
+	    xpack.security.authc.api_key.enabled: true
+	    xpack.security.http.ssl.enabled: true
+	    xpack.security.http.ssl.keystore.path: elastic-certificates.p12
+	    xpack.security.http.ssl.truststore.path: elastic-certificates.p12
+	    xpack.security.http.ssl.client_authentication: none
+	    xpack.http.ssl.verification_mode: none
+	    启动:
+	    C:\develop\env\elasticsearch-7.14.0\bin\elasticsearch.bat
+	    nohup ./elasticsearch  > es.log 2>&1 &
+	    firewall-cmd --get-active-zones
+	    firewall-cmd --zone=public --list-ports
+	    firewall-cmd --zone=public --add-port=9200/tcp --permanent
+	    firewall-cmd --zone=public --add-port=9300/tcp --permanent
+    firewall-cmd --reload
+	
 	常见错误:	
 	
-	1. bootstrap check failure [1] of [3]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
-
+1. bootstrap check failure [1] of [3]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
+	
 			ulimit -Hn
 			ulimit -Sn
-	2. bootstrap check failure [2] of [3]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
-
+2. bootstrap check failure [2] of [3]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+	
 			vi /etc/sysctl.conf
 			增加配置vm.max_map_count=262144
 			sysctl -p
 	3. bootstrap check failure [3] of [3]: the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_master_nodes] must be configured
-	4. 只监听ipv6 导致无法访问
-
+4. 只监听ipv6 导致无法访问
+	
 			vi /etc/default/grub
 			add ipv6.disable=1 at line 6,like:
 			GRUB_CMDLINE_LINUX="ipv6.disable=1 ..."
@@ -92,6 +93,12 @@
 
 若是es开启了https访问,修改一下elasticsearch.hosts: ["https://localhost:9200"]
 elasticsearch.ssl.verificationMode: none
+
+修改 kibana-encryption-keys:
+
+./kibana-encryption-keys generate
+
+将生成的key贴如kibana.yml
 
 3. logstash
 	
@@ -196,7 +203,7 @@ elasticsearch.ssl.verificationMode: none
 		   #}
 		   stdout { codec => rubydebug }
 		}
-
+	
 		启动:nohup ./logstash  -f logstash4.conf > ls.log 2>&1 &
 		firewall-cmd --zone=public --add-port=7110/tcp --permanent
 		firewall-cmd --reload
@@ -231,7 +238,7 @@ cacert => "/app/elk/logstash-7.15.1/config/ca.pem"
 	  paths:
 	    - C:\Users\pewee\logs\bsp\*.log
 	    #- c:\programdata\elasticsearch\logs\*
-      # 如果值为ture，那么fields存储在输出文档的顶级位置
+	  # 如果值为ture，那么fields存储在输出文档的顶级位置
 	  fields_under_root: true   
 	  fields:
 	    app: bsp
@@ -287,7 +294,7 @@ cacert => "/app/elk/logstash-7.15.1/config/ca.pem"
 		解决filebeats自动停止的方法:做成服务随系统启动
 		vi /usr/lib/systemd/system/filebeat.service
 		filebeat.service文件内容:
-
+	
 		[Unit]
 		Description=Filebeat sends log files to Logstash or directly to Elasticsearch.
 		Documentation=https://www.elastic.co/products/beats/filebeat
@@ -318,5 +325,25 @@ cacert => "/app/elk/logstash-7.15.1/config/ca.pem"
 		systemctl start filebeat
 		journalctl
 
-5. kibana-stack-manament-index-patern,新建一个index-patern
-6. kibana-discover可以看到数据
+kibana-stack-manament-index-patern,新建一个index-patern
+
+kibana-discover可以看到数据
+
+5. metricbeats
+
+   修改metricbeat.yml
+
+   ​	output.elasticsearch:  hosts: ["<es_url>"]  username: "elastic"  password: "<password>" setup.kibana:  host: "<kibana_url>"
+
+   ./metricbeat modules enable system
+
+   modules.d/system.yml中修改更多配置
+
+   kibana面板加载mertric仪表板
+
+   ./metricbeat setup 
+
+   nohup ./metricbeat -e   > mb.log 2>&1 &
+
+   
+
