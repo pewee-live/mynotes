@@ -43,6 +43,7 @@
 				cluster-config-file  nodes_7000.conf   //集群的配置  配置文件首次启动自动生成 7000,7001,7002
 				cluster-node-timeout  15000                //请求超时  默认15秒，可自行修改
 				notify-keyspace-events Ex   key通知
+				cluster-announce-ip  XXXXX   外网的ip地址,这里一定要写对,否则集群MOVE会跳转不成功
 			$ mkdir 6381 && cp ./6380/redis-6380.conf ./6381/redis-6381.conf && cd ./6381
 			$ mkdir 6382 && cp ./6380/redis-6380.conf ./6382/redis-6382.conf && cd ./6382
 			$ mkdir 6383 && cp ./6380/redis-6380.conf ./6383/redis-6383.conf && cd ./6383
