@@ -29,7 +29,8 @@
 		设置初始密码:
 		bin/elasticsearch-setup-passwords interactive
 			
-        配置文件:
+    
+	    配置文件:
 	    cluster.name: data-center
 	    cluster.initial_master_nodes: node-1
 	    node.name: node-1
@@ -41,7 +42,7 @@
 	    xpack.security.transport.ssl.keystore.path: certs/elastic-certificates.p12
 	    xpack.security.transport.ssl.truststore.path: certs/elastic-certificates.p12
 	    xpack.security.transport.ssl.client_authentication: required
-	    #这里以下可选开启api接口https传输(进阶安全)
+	    #这里以下可选开启api接口https传输(进阶安全) ,具体密钥和配置参考#https://www.elastic.co/guide/en/elasticsearch/reference/7.15/security-basic-setup-https.html#encrypt-kibana-#elasticsearch
 	    xpack.security.authc.api_key.enabled: true
 	    xpack.security.http.ssl.enabled: true
 	    xpack.security.http.ssl.keystore.path: elastic-certificates.p12
@@ -54,22 +55,22 @@
 	    firewall-cmd --get-active-zones
 	    firewall-cmd --zone=public --list-ports
 	    firewall-cmd --zone=public --add-port=9200/tcp --permanent
-	    firewall-cmd --zone=public --add-port=9300/tcp --permanent
-    firewall-cmd --reload
+    firewall-cmd --zone=public --add-port=9300/tcp --permanent
+	    firewall-cmd --reload
 	
 	常见错误:	
-	
-1. bootstrap check failure [1] of [3]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
+
+	1. bootstrap check failure [1] of [3]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
 	
 			ulimit -Hn
-			ulimit -Sn
-2. bootstrap check failure [2] of [3]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+		ulimit -Sn
+	2. bootstrap check failure [2] of [3]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
 	
 			vi /etc/sysctl.conf
 			增加配置vm.max_map_count=262144
 			sysctl -p
-	3. bootstrap check failure [3] of [3]: the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_master_nodes] must be configured
-4. 只监听ipv6 导致无法访问
+3. bootstrap check failure [3] of [3]: the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_master_nodes] must be configured
+	4. 只监听ipv6 导致无法访问
 	
 			vi /etc/default/grub
 			add ipv6.disable=1 at line 6,like:
