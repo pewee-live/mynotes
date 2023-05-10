@@ -64,6 +64,13 @@
 	
 			ulimit -Hn
 		ulimit -Sn
+		
+		在/etc/security/limits.conf中添加如下内容:sudo vi /etc/security/limits.conf
+		
+		pewee hard nofile 65536 
+		
+		pewee soft nofile 65536
+		
 	2. bootstrap check failure [2] of [3]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
 	
 			vi /etc/sysctl.conf
@@ -204,7 +211,7 @@ elasticsearch.ssl.verificationMode: none
 		   #}
 		   stdout { codec => rubydebug }
 		}
-	
+		
 		启动:nohup ./logstash  -f logstash4.conf > ls.log 2>&1 &
 		firewall-cmd --zone=public --add-port=7110/tcp --permanent
 		firewall-cmd --reload
