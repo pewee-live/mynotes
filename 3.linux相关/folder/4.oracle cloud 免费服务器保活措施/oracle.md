@@ -8,7 +8,7 @@ https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_R
 
 
 
-![回收策略](./pic/1.jpg)
+![回收策略](pic/1.JPG)
 
 对于E1类型(2个X86服务器):CPU在95%时间使用率少于20%且网络使用率少于20%;
 
@@ -81,7 +81,7 @@ htop
 
 可以看到CPU占用
 
-![status](./pic/2.jpg)
+![status](pic/2.JPG)
 
 
 
