@@ -220,6 +220,27 @@ elasticsearch.ssl.verificationMode: none
 	1. https://github.com/logstash-plugins/logstash-patterns-core/blob/master/patterns/ecs-v1/grok-patterns
 	2. https://blog.csdn.net/zhengzaifeidelushang/article/details/101271007
 	3. https://grokdebug.herokuapp.com/
+        4.微服务中配置:
+		
+		以下为微服务中的配置:
+		
+		​	filter {
+		 mutate {
+		​    remove_field => [ "ecs","tags","agent","@version","input","mac","path","@timestamp"]
+		​    #convert => [ "[geoip][coordinates]", "float" ]
+		   }
+		 grok {
+		​        match => { "message" => '\[(?<datetime>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\:\d{3})\] \[(?<traceId>.*),(?<spanId>.*)\] \[(?<loglevel>[A-Z\s]{4,5})\] \- (?<thread>[A-Za-z0-9.()/-]{4,40}) \- (?<codeline>[A-Za-z0-9#$.():/-]{4,400}) \- (?<content>.*)' }
+		​    }
+		 mutate {
+		​    strip => ["loglevel"]
+		​    remove_field => ["message"]
+		  }
+		 date {
+		​    match => [ "datetime", "YYYY-MM-dd HH:mm:ss:SSS" ]
+		​    locale => cn
+		​    }
+		}
 
 当es开启了ssl的时候,logstash 不能够直接使用 PKCS#12类型的证书！
 我们需要 第三种命令，去 logstash-node-1.p12 的证书中提取 pem证书
